@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน AUC - การไฟฟ้าส่วนภูมิภาค</title>
+  <meta name="description"
+    content="ระบบสารสนเทศและแดชบอร์ดติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน AUC การไฟฟ้าส่วนภูมิภาค เขต 3 (ภาคกลาง)">
+  <link rel="icon" type="image/svg+xml" href="assets/pea_logo.svg">
+  <link rel="stylesheet" href="css/styles.css?v=20261017_2355">
+
+</head>
+
+<body>
+
+  <div class="app-wrapper">
+
+    <!-- ==========================================
+       STICKY TOP SECTION (HEADER + NAVIGATION TABS)
+       ========================================== -->
+    <div class="sticky-top-section">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-inner">
+          <div class="brand-section">
+            <div class="pea-emblem" title="การไฟฟ้าส่วนภูมิภาค (Provincial Electricity Authority - PEA)">
+              <!-- Official PEA Logo Vector -->
+              <img src="assets/pea_logo.svg" alt="โลโก้การไฟฟ้าส่วนภูมิภาค PEA" />
+            </div>
+            <div class="brand-title-group">
+              <h1>
+                ระบบติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน
+                <span class="highlight-gold">AUC</span>
+              </h1>
+              <div class="brand-subtitle">
+                <span>การไฟฟ้าส่วนภูมิภาค เขต 3 (ภาคกลาง) • กองวิศวกรรมและบริการ (กรย.)</span>
+                <span class="badge-pea-tag">PEA AUC 2569</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <!-- Live File Upload Input (Hidden) -->
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.json" style="display:none;" />
+            <button class="btn btn-outline" onclick="document.getElementById('excelFileInput').click()"
+              title="นำเข้าไฟล์ Excel / JSON (รวมถึงไฟล์ 02 KPI.xlsx)">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>นำเข้าข้อมูล</span>
+            </button>
+
+            <button class="btn btn-gold" id="btnExportCsv" title="ดาวน์โหลดรายงานในรูปแบบ CSV / Excel">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+              <span>ส่งออกรายงาน</span>
+            </button>
+
+            <button class="btn btn-outline" id="btnPrintReport" title="พิมพ์รายงานสรุปผลงาน">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span>พิมพ์</span>
+            </button>
+
+            <!-- ปรับแต่งสี & ธีม (ย้ายมาไว้บนสุดใน Header Action Bar) -->
+            <div class="palette-widget-container" id="paletteWidgetContainer">
+              <button type="button" class="palette-fab" id="btnTogglePaletteFab"
+                title="ปรับแต่งสีพื้นหลังและสีกราฟ (คลิกเพื่อซ่อน/เปิดได้)">
+                <span class="fab-icon">🎨</span>
+                <span>ปรับแต่งสี</span>
+                <span class="fab-indicator" id="fabColorIndicator"></span>
+              </button>
+
+              <!-- Expanded Settings Panel -->
+              <div class="palette-panel" id="palettePanel" role="dialog" aria-label="กล่องปรับแต่งโทนสี">
+                <!-- Header -->
+                <div class="palette-header">
+                  <div class="palette-title-group">
+                    <div class="palette-title">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"></circle>
+                        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"></circle>
+                        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                        <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"></circle>
+                        <path
+                          d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z">
+                        </path>
+                      </svg>
+                      <span>ปรับแต่งสี & ธีม</span>
+                    </div>
+                    <div class="palette-subtitle">เลือกชุดสีสำเร็จรูป หรือกำหนดสีเองอิสระ</div>
+                  </div>
+                  <button type="button" class="palette-btn-close" id="btnClosePalettePanel" title="ย่อซ่อนแผงปรับแต่ง">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    <span>ซ่อน</span>
+                  </button>
+                </div>
+
+                <!-- Subtab Switcher -->
+                <div style="padding: 0.75rem 1.15rem 0;">
+                  <div class="palette-subtabs">
+                    <button type="button" class="palette-subtab-btn active" data-subtab="bgTab" id="subtabBtnBg">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                      </svg>
+                      <span>สีพื้นหลังเว็บ</span>
+                    </button>
+                    <button type="button" class="palette-subtab-btn" data-subtab="chartTab" id="subtabBtnChart">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                      </svg>
+                      <span>สีกราฟ & KPI</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Body / Tab Content -->
+                <div class="palette-body">
+                  <!-- Tab 1: Background Color -->
+                  <div class="palette-tab-content active" id="tabContentBg">
+                    <div class="palette-section-title">
+                      <span>ชุดสีพื้นหลังสำเร็จรูป (Presets)</span>
+                      <span style="font-size:0.7rem; color:var(--text-dim);">คลิกเพื่อเลือก</span>
+                    </div>
+                    <div class="bg-preset-grid" id="bgPresetGrid"></div>
+
+                    <div class="palette-divider"></div>
+
+                    <div class="palette-section-title">
+                      <span>เลือกสีพื้นหลังเอง (Custom Colors)</span>
+                      <span style="font-size:0.7rem; color:var(--pea-gold-400);">Live Preview</span>
+                    </div>
+                    <div class="custom-color-row">
+                      <div class="custom-color-item">
+                        <span class="color-picker-label">
+                          <span class="color-swatch-preview" id="swatchPreviewBgMain"
+                            style="background:#56247B;"></span>
+                          <span>สีหลัก (Base Color)</span>
+                        </span>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerCustomBgMain" value="#56247B" title="เลือกสีพื้นหลังหลัก">
+                          <input type="text" id="textCustomBgMain" class="color-hex-text" value="#56247B" maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="custom-color-item">
+                        <span class="color-picker-label">
+                          <span class="color-swatch-preview" id="swatchPreviewBgAccent"
+                            style="background:#7639A4;"></span>
+                          <span>สีไฮไลต์ (Accent Gradient)</span>
+                        </span>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerCustomBgAccent" value="#7639A4" title="เลือกสีไฮไลต์">
+                          <input type="text" id="textCustomBgAccent" class="color-hex-text" value="#7639A4"
+                            maxlength="7">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tab 2: Chart Colors -->
+                  <div class="palette-tab-content" id="tabContentChart">
+                    <div class="palette-section-title">
+                      <span>ชุดสีกราฟมาตรฐาน (Presets)</span>
+                      <span style="font-size:0.7rem; color:var(--text-dim);">ปิด / รวม / เหลือ</span>
+                    </div>
+                    <div class="chart-theme-presets" id="chartThemeGrid"></div>
+
+                    <div class="palette-divider"></div>
+
+                    <div class="palette-section-title">
+                      <span>เลือกสีกราฟแต่ละส่วนเอง (Custom Chart Colors)</span>
+                    </div>
+                    <div class="custom-color-grid">
+                      <div class="chart-color-field">
+                        <label for="pickerChartClosed">
+                          <span class="color-dot" id="dotChartClosed" style="background:#10B981;"></span>
+                          <span>ปิดงานแล้ว (Closed)</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartClosed" value="#10B981">
+                          <input type="text" id="textChartClosed" class="color-hex-text" value="#10B981" maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="chart-color-field">
+                        <label for="pickerChartTotal">
+                          <span class="color-dot" id="dotChartTotal" style="background:#A855F7;"></span>
+                          <span>มูลค่ารวม AUC (Total)</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartTotal" value="#A855F7">
+                          <input type="text" id="textChartTotal" class="color-hex-text" value="#A855F7" maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="chart-color-field">
+                        <label for="pickerChartRemaining">
+                          <span class="color-dot" id="dotChartRemaining" style="background:#EF4444;"></span>
+                          <span>คงเหลือดำเนินการ (Remaining)</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartRemaining" value="#EF4444">
+                          <input type="text" id="textChartRemaining" class="color-hex-text" value="#EF4444"
+                            maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="chart-color-field">
+                        <label for="pickerChartKpiGood">
+                          <span class="color-dot" id="dotChartKpiGood" style="background:#10B981;"></span>
+                          <span>KPI 5 ★ ยอดเยี่ยม (ผ่านเกณฑ์)</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartKpiGood" value="#10B981">
+                          <input type="text" id="textChartKpiGood" class="color-hex-text" value="#10B981" maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="chart-color-field">
+                        <label for="pickerChartKpiWarn">
+                          <span class="color-dot" id="dotChartKpiWarn" style="background:#EF4444;"></span>
+                          <span>KPI 1-4 ต้องเร่งรัด</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartKpiWarn" value="#EF4444">
+                          <input type="text" id="textChartKpiWarn" class="color-hex-text" value="#EF4444" maxlength="7">
+                        </div>
+                      </div>
+
+                      <div class="chart-color-field">
+                        <label for="pickerChartPlan">
+                          <span class="color-dot" id="dotChartPlan" style="background:#FFB81C;"></span>
+                          <span>เส้นแผนปิดงาน / แผนสะสม</span>
+                        </label>
+                        <div class="color-input-wrap">
+                          <input type="color" id="pickerChartPlan" value="#FFB81C">
+                          <input type="text" id="textChartPlan" class="color-hex-text" value="#FFB81C" maxlength="7">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Footer -->
+                <div class="palette-footer">
+                  <button type="button" class="btn-palette-reset" id="btnPaletteReset" title="รีเซ็ตกลับเป็นสีดั้งเดิม">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="1 4 1 10 7 10"></polyline>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>รีเซ็ตสีเดิม</span>
+                  </button>
+                  <button type="button" class="btn-palette-collapse" id="btnCollapsePaletteFooter">
+                    <span>ย่อซ่อนแถบ</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button class="btn-icon" id="btnThemeToggle" title="สลับโหมดมืด/สว่าง">
+              <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs-bar">
+        <div class="nav-tabs-inner">
+          <button class="nav-tab-btn active" data-tab="tab-dashboard">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>ภาพรวมผู้บริหาร (Overview)</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="tab-wbs" id="navTabBtnWbs"
+            title="รายงานติดตามงาน WBS คงเหลือ (ไฟล์ 03 WBSคงเหลือ)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+              <path d="M9 12h6"></path>
+              <path d="M9 16h6"></path>
+              <circle cx="12" cy="8" r="1" fill="currentColor"></circle>
+            </svg>
+            <span>WBS คงเหลือ (WBS Status)</span>
+            <span class="tab-badge" id="wbsTabTotalBadge"
+              style="background:var(--sweet-pink); color:#fff; font-weight:700;">2,968</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="tab-analytics">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>วิเคราะห์เปรียบเทียบ & Timeline</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="tab-warning">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>ศูนย์แจ้งเตือนจุดวิกฤต</span>
+            <span class="tab-badge" style="background:#EF4444;" id="criticalCountBadge">0</span>
+          </button>
+
+          <button class="nav-tab-btn" data-tab="tab-data-history" id="navTabBtnDataHistory"
+            title="ประวัติการนำเข้าข้อมูล แหล่งจัดเก็บ และบันทึกประวัติการแก้ไขข้อมูล">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <circle cx="12" cy="14" r="3"></circle>
+              <polyline points="12 12 12 14 14 15"></polyline>
+            </svg>
+            <span>ประวัติการนำเข้า & แก้ไขข้อมูล</span>
+            <span class="tab-badge" id="dataHistoryBadge" style="background:#8B5CF6; color:#fff; font-weight:700;">17 ต.ค.</span>
+          </button>
+
+        </div>
+      </nav>
+
+      <!-- ==========================================
+         TOP STICKY FILTER BAR (แถวตัวกรองแนวนอนด้านบน ล็อคแสดงไว้ตลอดเวลา)
+         ========================================== -->
+      <div class="top-sticky-filter-bar" id="topStickyFilterBar">
+        <div class="top-filter-inner">
+          <div class="top-filter-lead" title="แถบตัวกรองข้อมูลหลัก ล็อคแสดงผลไว้ตลอดเวลา">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>ตัวกรอง:</span>
+          </div>
+
+          <!-- 1. Dropdown: เดือนประเมิน (ม.ค. - ธ.ค. 2569) -->
+          <div class="top-filter-group" id="groupFilterMonth">
+            <label class="top-filter-label" for="filterMonth">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span>เดือน:</span>
+            </label>
+            <select class="form-select top-filter-select" id="filterMonth">
+              <option value="0">ม.ค. 2569</option>
+              <option value="1">ก.พ. 2569</option>
+              <option value="2">มี.ค. 2569</option>
+              <option value="3">เม.ย. 2569</option>
+              <option value="4">พ.ค. 2569</option>
+              <option value="5">มิ.ย. 2569</option>
+              <option value="6">ก.ค. 2569</option>
+              <option value="7" selected>ส.ค. 2569 (ล่าสุด)</option>
+              <option value="8" disabled>ก.ย. 2569 (ยังไม่มีข้อมูล)</option>
+              <option value="9" disabled>ต.ค. 2569 (ยังไม่มีข้อมูล)</option>
+              <option value="10" disabled>พ.ย. 2569 (ยังไม่มีข้อมูล)</option>
+              <option value="11" disabled>ธ.ค. 2569 (ยังไม่มีข้อมูล)</option>
+            </select>
+          </div>
+
+          <!-- 2. Dropdown: ประเภทเกณฑ์วัด -->
+          <div class="top-filter-group" id="groupFilterCriteria">
+            <label class="top-filter-label" for="filterCriteria">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              <span>เกณฑ์วัด:</span>
+            </label>
+            <select class="form-select top-filter-select" id="filterCriteria">
+              <option value="ALL">เลือกทั้งหมด</option>
+              <option value="ข้อ 1.1 งบ C.1 ก่อน 69" selected>ข้อ 1.1 งบ C.1 ก่อน 69</option>
+              <option value="ข้อ 1.2 งบ I , P ก่อนปี 68">ข้อ 1.2 งบ I , P ก่อนปี 68</option>
+              <option value="ข้อ 1.3 งบ I , P ก่อนปี 69">ข้อ 1.3 งบ I , P ก่อนปี 69</option>
+              <option value="ข้อ 2.1 งบ C.1 ปี 69">ข้อ 2.1 งบ C.1 ปี 69</option>
+              <option value="ข้อ 2.2 งบ I , P ปี 69">ข้อ 2.2 งบ I , P ปี 69</option>
+              <option value="ข้อ 3.1 TECO D2 (1มี.ค.-31พ.ค.)">ข้อ 3.1 TECO D2 (1มี.ค.-31พ.ค.)</option>
+              <option value="ข้อ 3.2 TECO D2(1มิ.ย.-31ส.ค.)">ข้อ 3.2 TECO D2(1มิ.ย.-31ส.ค.)</option>
+              <option value="ข้อ 3.3 TECO D2(1ก.ย.-31ธ.ค.)">ข้อ 3.3 TECO D2(1ก.ย.-31ธ.ค.)</option>
+              <option value="ข้อ 4 งบ C02.2 ปี 69">ข้อ 4 งบ C02.2 ปี 69</option>
+              <option value="ข้อ5 งานบ้านและที่ดินจัดสรร">ข้อ5 งานบ้านและที่ดินจัดสรร</option>
+            </select>
+            <!-- ปุ่มยางลบ รีเซ็ตเกณฑ์วัดกลับเป็นข้อ 1.1 -->
+            <button type="button" class="btn-filter-eraser btn-filter-eraser-top" id="btnTopEraserCriteria"
+              onclick="window.resetCriteriaFilter()" title="ยางลบ รีเซ็ตเกณฑ์วัดกลับเป็นข้อ 1.1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
+                <path d="M22 21H7"></path>
+                <path d="m5 11 9 9"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 3. Dropdown: พื้นที่ / จังหวัด -->
+          <div class="top-filter-group" id="groupFilterProvince">
+            <label class="top-filter-label" for="filterProvince">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+              </svg>
+              <span>พื้นที่:</span>
+            </label>
+            <select class="form-select top-filter-select" id="filterProvince">
+              <option value="ALL" selected>กฟก.3 (ทั้งหมด)</option>
+              <option value="กอง/กฟก.3">กอง/กฟก.3</option>
+              <option value="นครปฐม">นครปฐม</option>
+              <option value="สุพรรณบุรี">สุพรรณบุรี</option>
+              <option value="กาญจนบุรี">กาญจนบุรี</option>
+              <option value="สมุทรสาคร">สมุทรสาคร</option>
+            </select>
+            <button type="button" class="btn-filter-eraser btn-filter-eraser-top" id="btnTopEraserProvince"
+              onclick="window.resetProvinceFilter()" title="ยางลบ ล้างตัวกรองพื้นที่และกฟฟ. (Clear Province/Office)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
+                <path d="M22 21H7"></path>
+                <path d="m5 11 9 9"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 4. Dropdown: กอง/กฟฟ. -->
+          <div class="top-filter-group" id="groupFilterOffice">
+            <label class="top-filter-label" for="filterOffice">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              </svg>
+              <span>กอง/กฟฟ.:</span>
+            </label>
+            <select class="form-select top-filter-select" id="filterOffice">
+              <option value="ALL" selected>ทุกหน่วยงาน</option>
+            </select>
+            <button type="button" class="btn-filter-eraser btn-filter-eraser-top" id="btnTopEraserOffice"
+              onclick="window.resetOfficeFilter()" title="ยางลบ รีเซ็ตกอง/กฟฟ. กลับเป็นทุกหน่วยงาน">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"></path>
+                <path d="M22 21H7"></path>
+                <path d="m5 11 9 9"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- 5. ค้นหาด่วน -->
+          <div class="top-filter-search-item">
+            <div class="search-input-wrapper top-filter-search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" class="form-input" id="searchInput" placeholder="พิมพ์ชื่อ กฟฟ. หรือคำค้น..." />
+            </div>
+          </div>
+
+          <!-- 6. ปุ่มรีเซ็ต (แบบแคปซูลไวน์แดง #6A1B29 ขอบ #A83246 รัศมี 12px) -->
+          <button type="button" class="btn btn-sm btn-reset-filter-top" id="btnResetFilters"
+            title="รีเซ็ตตัวกรองทั้งหมด (Reset Filters)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>รีเซ็ต</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       MAIN CONTENT CONTAINER
+       ========================================== -->
+    <main class="main-container">
+
+      <div class="app-layout-grid">
+        <!-- ==========================================
+           LEFT SIDEBAR FILTER COLUMN (แผงตัวกรองข้อมูลหลัก)
+           ========================================== -->
+        <!-- Legacy Shims for JS compatibility (ซ่อนไว้เพื่อความเข้ากันได้ของ JS) -->
+        <div style="display:none;" aria-hidden="true" id="legacyFilterShims">
+          <div id="monthButtonsGrid"></div>
+          <div id="sidebarCriteriaButtons"></div>
+          <div id="sidebarProvinceButtons"></div>
+          <div id="sidebarOfficeButtons"></div>
+          <span id="sidebarOfficeCountBadge"></span>
+          <span id="selectedMonthBadge"></span>
+        </div>
+
+        <!-- ==========================================
+           RIGHT MAIN CONTENT AREA
+           ========================================== -->
+        <div class="dashboard-main-area">
+
+          <!-- ==========================================
+         TAB 1: EXECUTIVE OVERVIEW
+         ========================================== -->
+          <div id="tab-dashboard" class="tab-pane active">
+
+            <!-- ========================================================
+                 TOP EXECUTIVE SECTION:
+                 - Left Deck: Top Selection Strip (ความยาวไม่เกินการ์ด) + KPI Cards in 3 Rows
+                 - Right: กราฟร้อยละความสำเร็จการปิดงาน (% Closed) แยกตาม 9 ประเภทเกณฑ์วัด
+                 ======================================================== -->
+            <div class="top-executive-grid">
+              <!-- LEFT: Executive Info & KPI Cards (ความยาวจำกัดไม่เกินการ์ด) -->
+              <div class="top-executive-left-deck">
+                <!-- TOP ACTIVE SELECTION STRIP (แถบแสดงค่าการเลือกด้านบน - ธีมสีทอง PEA GOLD ความยาวจำกัดไม่เกินการ์ดฝั่งซ้าย) -->
+                <div class="top-selection-strip" id="topSelectionStrip">
+                  <div class="top-selection-flow">
+                    <span class="top-sel-icon-wrap" title="เงื่อนไขและค่าการเลือกปัจจุบัน">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.3">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                      </svg>
+                    </span>
+                    <span class="top-sel-label">เกณฑ์ที่เลือก:</span>
+                    <strong class="top-sel-val-gold" id="topSelCriteriaText">ข้อ 1.1 งบ C.1 ก่อน 69</strong>
+                    <span class="top-sel-unit-text" id="topSelUnitText">(มูลค่า บาท)</span>
+
+                    <span class="top-sel-divider">•</span>
+                    <span class="top-sel-label">ประจำเดือน:</span>
+                    <strong class="top-sel-val-gold" id="topSelMonthText">ส.ค. 2569</strong>
+
+                    <span class="top-sel-divider">•</span>
+                    <span class="top-sel-label">พื้นที่:</span>
+                    <strong class="top-sel-val-gold" id="topSelProvinceText">กฟก.3 (ทั้งหมด)</strong>
+
+                    <span id="topSelOfficeWrapper" style="display:none;">
+                      <span class="top-sel-divider">•</span>
+                      <span class="top-sel-label">กอง/กฟฟ.:</span>
+                      <strong class="top-sel-val-gold" id="topSelOfficeText"></strong>
+                    </span>
+
+                    <span id="topSelSearchWrapper" style="display:none;">
+                      <span class="top-sel-divider">•</span>
+                      <span class="top-sel-label">ค้นหา:</span>
+                      <strong class="top-sel-val-gold" id="topSelSearchText"></strong>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- EXECUTIVE DONUT & KPI COMPACT CARD (กราฟวงกลมโดนัท: ด้านในแสดง KPI / ด้านนอกแสดงมูลค่า งาน ปิดแล้ว คงเหลือ กะทัดรัด ประหยัดเนื้อที่) -->
+                <div class="content-card executive-donut-kpi-card" id="executiveDonutKpiCard">
+                  <!-- แถวบน: สรุปรวมมูลค่าและงานทั้งหมด -->
+                  <div class="exec-donut-top-summary">
+                    <div class="exec-summary-title-row">
+                      <span class="badge-pea-tag" id="kpiCard1ScopeBadge">กฟก.3</span>
+                      <span class="exec-summary-title">ภาพรวมมูลค่า & งาน AUC</span>
+                    </div>
+                    <div class="exec-summary-val-row">
+                      <span class="exec-total-main-val" id="kpiTotalVal">0.00 ฿</span>
+                      <span class="exec-total-jobs-badge" id="kpiTotalJobsSub">0 งาน</span>
+                    </div>
+                  </div>
+
+                  <!-- แถวกลาง: โครงสร้างแนวตั้งสมส่วน ปิดงานแล้ว (บน) -> กราฟวงกลม KPI (กลาง) -> คงเหลือ (ล่าง) -->
+                  <div class="exec-donut-main-row vertical-layout">
+                    <!-- ปิดงานแล้ว (สีเขียว: วางด้านบนวงกลม สอดคล้องกับแนวโค้งสีเขียวของวงกลม) -->
+                    <div class="donut-stat-col stat-closed stat-box-top">
+                      <div class="donut-stat-head-row">
+                        <div class="donut-stat-label">
+                          <span class="donut-stat-dot dot-closed"></span>
+                          <span>ปิดงานแล้ว</span>
+                        </div>
+                        <div class="donut-stat-jobs badge-jobs-closed">
+                          <span>ปิดแล้ว <strong id="kpiClosedJobs">0</strong> งาน</span>
+                        </div>
+                      </div>
+                      <div class="donut-stat-val text-success" id="kpiClosedVal">0.00 ฿</div>
+                      <!-- Hidden elements for complete JS compatibility -->
+                      <span id="donutClosedValRatio" style="display:none;" aria-hidden="true"></span>
+                      <span id="kpiClosedJobsPct" style="display:none;" aria-hidden="true"></span>
+                      <span id="barValProgress" style="display:none;" aria-hidden="true"></span>
+                    </div>
+
+                    <!-- กราฟวงกลมโดนัท AUC พร้อมคะแนน KPI (จัดกึ่งกลางการ์ด สมส่วน สวยงาม) -->
+                    <div class="exec-donut-chart-wrapper">
+                      <div class="exec-donut-canvas-box">
+                        <canvas id="executiveDonutChart" width="104" height="104"></canvas>
+                        <!-- Center Content: แสดง KPI สวยงาม เรียบหรู สัดส่วนพอดี -->
+                        <div class="exec-donut-center-content" id="execDonutCenterContent">
+                          <div class="donut-kpi-star-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                              <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+                              </polygon>
+                            </svg>
+                            <span>KPI</span>
+                          </div>
+                          <div class="donut-kpi-score-row">
+                            <span class="donut-kpi-score" id="kpiAvgKpi">-</span>
+                            <span class="donut-kpi-unit" id="kpiAvgUnit" style="display:none;">/ 5</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- คงเหลือ (สีแดง: วางด้านล่างวงกลม สอดคล้องกับแนวโค้งสีแดงของวงกลม) -->
+                    <div class="donut-stat-col stat-remain stat-box-bottom">
+                      <div class="donut-stat-head-row">
+                        <div class="donut-stat-label">
+                          <span class="donut-stat-dot dot-remain"></span>
+                          <span>คงเหลือ</span>
+                        </div>
+                        <div class="donut-stat-jobs badge-jobs-remain">
+                          <span>คงเหลือ <strong id="kpiRemainJobs">0</strong> งาน</span>
+                        </div>
+                      </div>
+                      <div class="donut-stat-val text-danger" id="kpiRemainVal">0.00 ฿</div>
+                      <!-- Hidden elements for complete JS compatibility -->
+                      <span id="donutRemainValRatio" style="display:none;" aria-hidden="true"></span>
+                      <span id="kpiRemainJobsPct" style="display:none;" aria-hidden="true"></span>
+                      <span id="barRemainProgress" style="display:none;" aria-hidden="true"></span>
+                    </div>
+                  </div>
+
+                  <!-- ด้านล่างกราฟ: แถบ % ปิดงานมูลค่า AUC และ % ปิดจำนวนงาน พร้อมรถบริการเคลื่อนที่ กฟภ. (PEA EV) วิ่ง (ตามรูป 28) -->
+                  <div class="exec-dual-progress-section">
+                    <!-- แถบ 1: % ปิดงานมูลค่า AUC (วิ่งเมื่อเลือกข้อ 1, 2, 5 หรือ ALL) -->
+                    <div class="exec-progress-block">
+                      <div class="exec-progress-head-row">
+                        <div class="exec-progress-label-wrap">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                          </svg>
+                          <span>% ปิดงานมูลค่า AUC</span>
+                        </div>
+                        <div class="exec-progress-target-badge" id="kpiTargetCircleBadge" title="เป้าหมายเดือน ธ.ค.">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.4">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <polyline points="9 12 11 14 15 10"></polyline>
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="exec-progress-val-row">
+                        <span class="exec-progress-big-val text-gold" id="kpiPctVal">0.00%</span>
+                      </div>
+                      <div class="progress-track track-gold-pattern">
+                        <div class="progress-fill fill-gold-stripe" id="barMainPctClosed" style="width:0%">
+                          <div class="pea-ev-runner" title="รถบริการเคลื่อนที่ กฟภ. (PEA EV)">
+                            <div class="pea-ev-car-body">
+                              <img src="assets/pea_truck_right.png" alt="รถบริการเคลื่อนที่ กฟภ."
+                                class="pea-ev-truck-img" />
+                              <span class="pea-ev-beam"></span>
+                              <span class="pea-ev-sparkle">⚡</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- แถบ 2: % ปิดจำนวนงาน (วิ่งเมื่อเลือกข้อ 3, 4) -->
+                    <div class="exec-progress-block">
+                      <div class="exec-progress-head-row">
+                        <div class="exec-progress-label-wrap">
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            <polyline points="9 14 11 16 15 12"></polyline>
+                          </svg>
+                          <span>% ปิดจำนวนงาน</span>
+                        </div>
+                      </div>
+                      <div class="exec-progress-val-row">
+                        <span class="exec-progress-big-val text-gold" id="kpiJobPctClosed">0.00%</span>
+                      </div>
+                      <div class="progress-track track-gold-pattern">
+                        <div class="progress-fill fill-gold-stripe" id="barJobPctClosed" style="width:0%">
+                          <div class="pea-ev-runner" title="รถบริการเคลื่อนที่ กฟภ. (PEA EV)">
+                            <div class="pea-ev-car-body">
+                              <img src="assets/pea_truck_right.png" alt="รถบริการเคลื่อนที่ กฟภ."
+                                class="pea-ev-truck-img" />
+                              <span class="pea-ev-beam"></span>
+                              <span class="pea-ev-sparkle">⚡</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Hidden elements for complete JS compatibility -->
+                  <div style="display:none;" aria-hidden="true">
+                    <span id="kpiMainPctClosed"></span>
+                    <span id="kpiCard4TargetBadge"></span>
+                    <span id="kpiAvgBadge"></span>
+                    <div id="kpiLevelCard">
+                      <div class="kpi-level-step"></div>
+                    </div>
+                    <span id="kpiCalcMethodText"></span>
+                    <div id="barDualClosed"></div>
+                    <div id="barDualRemain"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT: UNIFIED CARD: รวม 2 กราฟ (บน: เป้าหมายปิดงานเพิ่ม กราฟโดนัท / ล่าง: รายงานผลราย กฟฟ.) -->
+              <div class="content-card unified-projection-office-card" id="unifiedProjectionOfficeCard">
+
+                <!-- GLOBAL DASHBOARD FILTERS (FULLSCREEN ONLY) -->
+                <div class="card-header-filters"
+                  style="width: 100%; justify-content: flex-end; padding: 1rem 1.25rem 0; margin-left: 0; flex-wrap: wrap;">
+                  <div class="header-filter-item" title="ตัวกรองเดือนประเมิน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <select class="header-filter-select select-chart-month" aria-label="กรองเดือนประเมิน"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองประเภทเกณฑ์วัด">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <select class="header-filter-select select-chart-crit" aria-label="กรองประเภทเกณฑ์วัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองจังหวัด/กอง">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                    <select class="header-filter-select select-chart-prov" aria-label="กรองจังหวัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองหน่วยงาน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    </svg>
+                    <select class="header-filter-select select-chart-off" aria-label="กรองหน่วยงาน"></select>
+                  </div>
+                  <button type="button" class="btn-reset-fullscreen"
+                    onclick="document.getElementById('btnResetFilters').click()"
+                    title="รีเซ็ตตัวกรองทั้งหมด (Reset Filters)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>รีเซ็ต</span>
+                  </button>
+                </div>
+                <!-- SECTION 1 (ด้านบน): แผนเป้าหมายปิดงานเพิ่ม 3 เดือนถัดไป (กราฟโดนัท / แถบแท่ง) -->
+                <div class="unified-card-top-section" id="next3mProjectionSection">
+                  <div class="next3m-chart-card" id="next3mHBarChartCard"
+                    style="background:transparent; border:none; box-shadow:none; padding:0; margin-top:0;">
+                    <div class="next3m-chart-header" id="next3mChartHeader" style="display:none;">
+                      <div class="next3m-chart-controls" id="next3mHBarControls"
+                        style="display:none; align-items:center; gap:0.5rem; margin-left:auto;">
+                        <button type="button" class="btn-toggle-metric active" id="btnNext3mModeVal"
+                          onclick="window.setNext3mHBarMode('val')">
+                          💰 มูลค่า (ล้านบาท)
+                        </button>
+                        <button type="button" class="btn-toggle-metric" id="btnNext3mModeJob"
+                          onclick="window.setNext3mHBarMode('job')">
+                          ⚡ จำนวนงาน (งาน)
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Container rendered dynamically by renderNext3mHorizontalBarChart() -->
+                    <div id="next3mHBarChartContainer" class="next3m-hbar-container">
+                      <!-- Dynamic rendering of Donut Chart / Single Horizontal Stacked Bar -->
+                    </div>
+                  </div>
+
+                  <!-- 3-MONTH CARDS GRID (แสดงด้านล่างกราฟแนวนอน) -->
+                  <div class="next3m-cards-grid" id="next3mCardsContainer" style="display:none; margin-top:0.75rem;">
+                    <!-- Dynamic render cards for Month +1, Month +2, Month +3 -->
+                  </div>
+
+                  <!-- DETAILED CRITERIA BREAKDOWN TABLE (Collapsible) -->
+                  <div class="next3m-table-wrapper" id="next3mTableWrapper" style="display:none; margin-top:1.25rem;">
+                    <div class="table-responsive"
+                      style="max-height:480px; overflow-y:auto; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">
+                      <table class="data-table" id="next3mDetailTable" style="width:100%; margin:0;">
+                        <thead>
+                          <tr>
+                            <th style="width:50px; text-align:center;">#</th>
+                            <th style="min-width:180px;">ประเภทเกณฑ์วัด</th>
+                            <th style="width:110px; text-align:center;">หมวดการวัด</th>
+                            <th style="width:130px; text-align:right;" id="thNext3mTotBase">รวมทั้งสิ้น</th>
+                            <th style="width:130px; text-align:right;" id="thNext3mClosedBase">ปิดแล้ว</th>
+                            <th style="width:130px; text-align:right; color:#FCA5A5;" id="thNext3mRemainBase">คงเหลือ
+                            </th>
+                            <th
+                              style="min-width:150px; text-align:right; background:rgba(255,184,28,0.08); color:var(--pea-gold-400);"
+                              id="thNext3mMonth1">ก.ย. 69 (ต้องปิดเพิ่ม)</th>
+                            <th
+                              style="min-width:150px; text-align:right; background:rgba(16,185,129,0.08); color:#6EE7B7;"
+                              id="thNext3mMonth2">ต.ค. 69 (ต้องปิดเพิ่ม)</th>
+                            <th
+                              style="min-width:150px; text-align:right; background:rgba(6,182,212,0.08); color:#67E8F9;"
+                              id="thNext3mMonth3">พ.ย. 69 (ต้องปิดเพิ่ม)</th>
+                            <th
+                              style="min-width:150px; text-align:right; background:rgba(168,85,247,0.08); color:#C084FC;"
+                              id="thNext3mMonth4">ธ.ค. 69 (ต้องปิดเพิ่ม)</th>
+                          </tr>
+                        </thead>
+                        <tbody id="next3mTableBody">
+                          <!-- Dynamic rows -->
+                        </tbody>
+                        <tfoot id="next3mTableFoot" style="font-weight:700; background:rgba(20,5,35,0.75);">
+                          <!-- Dynamic totals -->
+                        </tfoot>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Luminous Elegant Divider: เส้นแบ่งสัดส่วน ปรับไม่ให้ย้อนทับกัน -->
+                <div class="unified-card-divider"></div>
+
+                <!-- SECTION 2 (ด้านล่าง): กราฟรายงานผลแบบเดิม (% ปิดงานเดือนล่าสุด ราย กฟฟ.) -->
+                <div class="unified-card-bottom-section" id="officeBarChartSection">
+                  <div class="card-header" style="flex-wrap:wrap; gap:0.75rem; padding-top:0.35rem;">
+                    <div class="card-title"
+                      style="display:flex; align-items:center; flex-wrap:wrap; gap:1rem; flex: 1;">
+                      <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <line x1="18" y1="20" x2="18" y2="10"></line>
+                          <line x1="12" y1="20" x2="12" y2="4"></line>
+                          <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>ผลการดำเนินงาน % ปิดงานเดือนล่าสุด ราย กฟฟ. (แกน X: กฟฟ. / แกน Y: % ปิดงาน)</span>
+                      </div>
+                      <div style="display:flex; align-items:center; gap:12px; font-size:0.75rem; margin-left:auto;">
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><span id="legendKpiGoodDot"
+                            style="width:10px; height:10px; background:#10B981; border-radius:2px;"></span> KPI 5 ★
+                          ยอดเยี่ยม</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><span id="legendKpiWarnDot"
+                            style="width:10px; height:10px; background:#EF4444; border-radius:2px;"></span> KPI 1-4
+                          ต้องเร่งรัด</span>
+                      </div>
+                    </div>
+                    <!-- Filters moved to the top of unified card -->
+                    <div class="card-actions">
+                      <button type="button" class="btn-formula-tag" id="btnToggleCalcFormula" onclick="window.toggleCalcFormula()"
+                        title="แสดง/ซ่อน สูตรการคำนวณ %ปิดงาน และ %KPI (เกณฑ์วัด: เลือกทั้งหมด)">
+                        <span class="formula-icon">📐</span>
+                        <span id="btnToggleCalcFormulaText">สูตรคำนวณ (เลือกทั้งหมด)</span>
+                      </button>
+                      <button class="btn-pea-ai-tag" id="btnToggleBarAiAnalysis" onclick="window.toggleBarAiAnalysis()"
+                        title="ซ่อน/แสดง บทวิเคราะห์ AI หน่วยงานที่ตกเกณฑ์" style="display: none;">
+                        <span class="ai-sparkle-icon">✨</span>
+                        <span>บทวิเคราะห์ AI หน่วยงานตกเกณฑ์ (KPI 1-4)</span>
+                        <span class="ai-warning-count-dot" id="barAiFailingCountBadge">0 แห่ง</span>
+                      </button>
+                      <button class="btn-fullscreen" onclick="toggleCardFullscreen(this)" title="ขยายกราฟเต็มหน้าจอ">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2">
+                          <path
+                            d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                          </path>
+                        </svg>
+                        <span>ขยายเต็มจอ</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- CALCULATION FORMULA & KPI BREAKDOWN PANEL (สูตรการคำนวณ %ปิดงาน และ %KPI เกณฑ์วัด: เลือกทั้งหมด) -->
+                  <div class="calc-formula-panel" id="calcFormulaPanel" style="display: none;">
+                    <div class="calc-formula-header">
+                      <div class="calc-formula-title-group">
+                        <div class="calc-formula-icon-badge">📐</div>
+                        <div>
+                          <div class="calc-formula-title-text">
+                            <span>สูตรการคำนวณ % ปิดงาน และ % KPI (เกณฑ์วัด: เลือกทั้งหมด / ALL)</span>
+                            <span class="calc-formula-chip" id="calcFormulaMonthChip">ประจำเดือน ส.ค. 2569</span>
+                          </div>
+                          <div class="calc-formula-subtitle">
+                            หลักเกณฑ์การคำนวณผลการดำเนินงานและเส้นระดับเป้าหมายบนกราฟการไฟฟ้าส่วนภูมิภาค เขต 3 (ภาคกลาง)
+                          </div>
+                        </div>
+                      </div>
+                      <div class="calc-formula-header-actions">
+                        <button type="button" class="btn-hide-formula" id="btnHideFormulaInside" onclick="window.toggleCalcFormula()" title="คลิกเพื่อซ่อนกล่องสูตรการคำนวณ">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                          <span>ซ่อนการคำนวณ</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="calc-formula-grid">
+                      <!-- CARD 1: สูตร % ปิดงาน ราย กฟฟ. และภาพรวม ฟภ.3 -->
+                      <div class="calc-card">
+                        <div class="calc-card-head">
+                          <div class="calc-card-title">
+                            <span class="calc-bullet">1</span>
+                            <span>สูตรการคิด % ปิดงาน (กรณีเลือกทั้งหมด)</span>
+                          </div>
+                          <span class="calc-tag gold">มูลค่า AUC / จำนวนงาน</span>
+                        </div>
+                        <div class="calc-card-body">
+                          <!-- กฟฟ. รายแห่ง -->
+                          <div class="calc-math-block">
+                            <div class="calc-math-label">📍 ระดับ กฟฟ. / กฟส. (รายหน่วยงาน):</div>
+                            <div class="calc-formula-box">
+                              <span class="formula-term">% ปิดงาน</span>
+                              <span class="formula-eq">=</span>
+                              <div class="formula-fraction">
+                                <span class="formula-numerator">ผลรวมมูลค่าปิดงาน AUC ของทุกเกณฑ์วัด</span>
+                                <span class="formula-denominator">ผลรวมมูลค่า AUC ทั้งหมดของทุกเกณฑ์วัด</span>
+                              </div>
+                              <span class="formula-mult">× 100</span>
+                            </div>
+                            <div class="calc-note">
+                              * หากหน่วยงานไม่มีมูลค่างาน (มีเฉพาะงานประเภท 3 หรือ 4) จะคิดจาก <code>(ผลรวมงานที่ปิด ÷ ผลรวมงานทั้งหมด) × 100</code>
+                            </div>
+                          </div>
+
+                          <!-- ภาพรวม ฟภ.3 -->
+                          <div class="calc-math-block">
+                            <div class="calc-math-label">⭐ ภาพรวมเขต ฟภ.3 (ทั้งหมด) [แท่งลายเฉียงประดับดาว]:</div>
+                            <div class="calc-formula-box kfg-highlight">
+                              <span class="formula-term">% ปิดงานรวม ฟภ.3</span>
+                              <span class="formula-eq">=</span>
+                              <div class="formula-fraction">
+                                <span class="formula-numerator">∑ มูลค่าปิดงาน AUC ทุก กฟฟ. และทุกเกณฑ์</span>
+                                <span class="formula-denominator">∑ มูลค่า AUC ทั้งหมดทุก กฟฟ. และทุกเกณฑ์</span>
+                              </div>
+                              <span class="formula-mult">× 100</span>
+                            </div>
+                            <div class="calc-note">
+                              เป็นค่าเฉลี่ยถ่วงน้ำหนักรวมทั้งเขต และจัดเรียง Ranking เปรียบเทียบกับทุก กฟฟ. ในกราฟ
+                            </div>
+                          </div>
+
+                          <!-- ประเภทหน่วยวัด -->
+                          <div class="calc-sub-grid">
+                            <div class="calc-mini-box">
+                              <div class="mini-title">💰 คิดตามมูลค่า (บาท) - 6 เกณฑ์:</div>
+                              <div class="mini-desc">ข้อ 1.1, 1.2, 1.3 (งบ C.1 / I, P ปีก่อน) • ข้อ 2.1, 2.2 (งบ C.1 / I, P ปี 69) • ข้อ 5 (บ้านและที่ดินจัดสรร)</div>
+                            </div>
+                            <div class="calc-mini-box">
+                              <div class="mini-title">⚡ คิดตามจำนวนงาน (งาน) - 3 เกณฑ์:</div>
+                              <div class="mini-desc">ข้อ 3.1, 3.2, 3.3 (TECO D2 ตามช่วงเวลา) • ข้อ 4 (งบ C02.2 ปี 69)</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- CARD 2: สูตร % KPI และเส้นเป้าหมาย 4 เส้น -->
+                      <div class="calc-card">
+                        <div class="calc-card-head">
+                          <div class="calc-card-title">
+                            <span class="calc-bullet">2</span>
+                            <span>สูตรการคิด % KPI และเส้นเป้าหมาย (Target Lines)</span>
+                          </div>
+                          <span class="calc-tag purple">เป้าหมาย Level 5</span>
+                        </div>
+                        <div class="calc-card-body">
+                          <div class="calc-math-block">
+                            <div class="calc-math-label">🎯 สูตรคำนวณเส้นประเป้าหมายบนกราฟ (Target Line):</div>
+                            <div class="calc-formula-box target-highlight">
+                              <span class="formula-term">เส้นเป้าหมาย Level 5 (เดือน M)</span>
+                              <span class="formula-eq">=</span>
+                              <div class="formula-fraction">
+                                <span class="formula-numerator">∑ เกณฑ์เป้าหมาย Level 5 ของแต่ละเกณฑ์ในเดือน M</span>
+                                <span class="formula-denominator">จำนวนเกณฑ์วัดที่มีการประเมินในเดือนนั้น (N = 8 เกณฑ์)</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Live Breakdown Table of Target Lines -->
+                          <div class="calc-targets-table-wrapper">
+                            <div class="calc-math-label">📊 ที่มาของเส้นเป้าหมาย 4 ระดับบนกราฟ:</div>
+                            <table class="calc-targets-table">
+                              <thead>
+                                <tr>
+                                  <th>เส้นเป้าหมาย</th>
+                                  <th>ค่า % บนกราฟ</th>
+                                  <th>การคำนวณ (เฉลี่ย 8 เกณฑ์วัด)</th>
+                                  <th>สถานะรอบประเมิน</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr class="tr-dec">
+                                  <td><span class="t-badge t-dec">ธ.ค.</span></td>
+                                  <td class="t-val">80.00%</td>
+                                  <td>(100+90+80+70+50+100+100+50) ÷ 8 = 640 ÷ 8</td>
+                                  <td>เป้าหมายสิ้นปี 2569</td>
+                                </tr>
+                                <tr class="tr-oct">
+                                  <td><span class="t-badge t-oct">ต.ค.</span></td>
+                                  <td class="t-val">71.25%</td>
+                                  <td>(90+80+70+60+40+100+90+40) ÷ 8 = 570 ÷ 8</td>
+                                  <td>เป้าหมายอีก 2 เดือนถัดไป</td>
+                                </tr>
+                                <tr class="tr-sep">
+                                  <td><span class="t-badge t-sep">ก.ย.</span></td>
+                                  <td class="t-val">65.00%</td>
+                                  <td>(80+75+65+50+35+100+80+35) ÷ 8 = 520 ÷ 8</td>
+                                  <td>เป้าหมายเดือนถัดไป (+1)</td>
+                                </tr>
+                                <tr class="tr-cur">
+                                  <td><span class="t-badge t-cur" id="calcCurMonthBadge">ส.ค.</span></td>
+                                  <td class="t-val" id="calcCurMonthVal">59.63%</td>
+                                  <td id="calcCurMonthCalc">(71+70+60+45+30+100+71+30) ÷ 8 = 477 ÷ 8</td>
+                                  <td>เป้าหมายเดือนที่ประเมินปัจจุบัน</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- CARD 3: เกณฑ์วัดและการประเมินตัดเกรดสีแท่งกราฟ -->
+                      <div class="calc-card full-span">
+                        <div class="calc-card-head">
+                          <div class="calc-card-title">
+                            <span class="calc-bullet">3</span>
+                            <span>เกณฑ์การวัดและการตัดเกรดสีแท่งกราฟ (Evaluation Criteria & Ranking)</span>
+                          </div>
+                          <span class="calc-tag green">เกณฑ์ระดับ 1 - 5</span>
+                        </div>
+                        <div class="calc-card-body">
+                          <div class="kpi-criteria-rules-grid">
+                            <div class="rule-box rule-pass">
+                              <div class="rule-icon">🟢</div>
+                              <div class="rule-content">
+                                <div class="rule-title">แท่งสีเขียว • ผ่านเกณฑ์ (KPI ระดับ 5 ★ ยอดเยี่ยม)</div>
+                                <div class="rule-desc">
+                                  หน่วยงานที่มี <strong>% ปิดงานจริง &ge; เป้าหมาย Level 5 ของเดือน</strong> (เช่น ส.ค. ได้ &ge; 59.63%)
+                                  ถือว่าผลการดำเนินงานเป็นไปตามแผนงานหรือเร็วกว่าเป้าหมาย
+                                </div>
+                              </div>
+                            </div>
+                            <div class="rule-box rule-warn">
+                              <div class="rule-icon">🔴</div>
+                              <div class="rule-content">
+                                <div class="rule-title">แท่งสีแดง • ต่ำกว่าเกณฑ์ (KPI ระดับ 1-4 ต้องเร่งรัด)</div>
+                                <div class="rule-desc">
+                                  หน่วยงานที่มี <strong>% ปิดงานจริง &lt; เป้าหมาย Level 5 ของเดือน</strong> (เช่น ส.ค. ได้ &lt; 59.63%)
+                                  ต้องเร่งรัดปิดงาน AUC พัสดุและค่าใช้จ่ายตามแผน
+                                </div>
+                              </div>
+                            </div>
+                            <div class="rule-box rule-star">
+                              <div class="rule-icon">⭐</div>
+                              <div class="rule-content">
+                                <div class="rule-title">แท่งลายเฉียงประดับดาว • ฟภ.3 (ทั้งหมด)</div>
+                                <div class="rule-desc">
+                                  แสดงผลสัมฤทธิ์ภาพรวมเฉลี่ยทั้งเขต (ในภาพ = 64.6%) เพื่อให้ผู้บริหารและทุกหน่วยงานเปรียบเทียบว่าตนเองอยู่สูงกว่าหรือต่ำกว่าค่าเฉลี่ยของเขต
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="kpi-overall-score-formula">
+                            <span class="formula-icon-small">💡</span>
+                            <span><strong>สูตรคำนวณคะแนน KPI ภาพรวม (ระดับ 1 - 5):</strong> นำคะแนนระดับที่ประเมินได้ของแต่ละเกณฑ์วัด (ตามเกณฑ์ช่วงในตาราง 02 KPI) มาคำนวณ <code>คะแนนเฉลี่ย = (∑ คะแนนระดับ KPI ของทุกเกณฑ์) ÷ จำนวนเกณฑ์ที่ประเมิน</code></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Canvas Bar Chart -->
+                  <div class="chart-container" id="officePercentChartContainer">
+                    <canvas id="officePercentBarChart"></canvas>
+                  </div>
+
+                  <!-- AI SMART EXECUTIVE ANALYSIS PANEL FOR FAILING KPI UNITS (หน่วยงานที่ตกเกณฑ์ KPI 1-4) -->
+                  <div class="bar-ai-analysis-panel" id="barChartAiAnalysisPanel" style="display: none;"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ========================================================
+               CRITERIA COMPARISON CHART: ร้อยละความสำเร็จการปิดงาน (% Closed) แยกตาม 9 ประเภทเกณฑ์วัด (Full Width)
+               ======================================================== -->
+            <div class="content-card top-criteria-chart-card" id="topCriteriaChartCard" style="margin-bottom:1.5rem;">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <span id="criteriaComparisonTitle">
+                    <span class="criteria-title-full">ร้อยละความสำเร็จการปิดงาน (% Closed) แยกตาม 9
+                      ประเภทเกณฑ์วัด</span>
+                  </span>
+                </div>
+                <div class="card-header-filters">
+                  <div class="header-filter-item" title="ตัวกรองเดือนประเมิน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <select class="header-filter-select select-chart-month" aria-label="กรองเดือนประเมิน"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองประเภทเกณฑ์วัด">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <select class="header-filter-select select-chart-crit" aria-label="กรองประเภทเกณฑ์วัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองจังหวัด/กอง">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                    <select class="header-filter-select select-chart-prov" aria-label="กรองจังหวัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองหน่วยงาน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    </svg>
+                    <select class="header-filter-select select-chart-off" aria-label="กรองหน่วยงาน"></select>
+                  </div>
+                  <button type="button" class="btn-reset-fullscreen"
+                    onclick="document.getElementById('btnResetFilters').click()"
+                    title="รีเซ็ตตัวกรองทั้งหมด (Reset Filters)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>รีเซ็ต</span>
+                  </button>
+                </div>
+                <div class="card-actions">
+                  <button class="btn-fullscreen" onclick="toggleCardFullscreen(this)" title="ขยายกราฟเต็มหน้าจอ">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                      </path>
+                    </svg>
+                    <span>ขยายเต็มจอ</span>
+                  </button>
+                </div>
+              </div>
+              <div class="chart-container" id="criteriaComparisonChartContainer">
+                <canvas id="criteriaComparisonChart"></canvas>
+                <canvas id="criteriaFireworksCanvas" class="criteria-fireworks-overlay"></canvas>
+              </div>
+            </div>
+
+            <!-- TIMELINE CHART: Monthly Plan Projection -->
+            <div class="content-card" style="margin-bottom:1.5rem;">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <span id="timelineChartTitle">% ปิดงานมูลค่า AUC สะสมรายเดือน ตลอดปี 2569 (ม.ค. - ธ.ค.)</span>
+                </div>
+                <div class="card-header-filters">
+                  <div class="header-filter-item" title="ตัวกรองเดือนประเมิน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                      <line x1="16" y1="2" x2="16" y2="6" />
+                      <line x1="8" y1="2" x2="8" y2="6" />
+                      <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    <select class="header-filter-select select-chart-month" aria-label="กรองเดือนประเมิน"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองประเภทเกณฑ์วัด">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                    </svg>
+                    <select class="header-filter-select select-chart-crit" aria-label="กรองประเภทเกณฑ์วัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองจังหวัด/กอง">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                    </svg>
+                    <select class="header-filter-select select-chart-prov" aria-label="กรองจังหวัด"></select>
+                  </div>
+                  <div class="header-filter-item" title="ตัวกรองหน่วยงาน">
+                    <svg class="header-filter-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    </svg>
+                    <select class="header-filter-select select-chart-off" aria-label="กรองหน่วยงาน"></select>
+                  </div>
+                  <button type="button" class="btn-reset-fullscreen"
+                    onclick="document.getElementById('btnResetFilters').click()"
+                    title="รีเซ็ตตัวกรองทั้งหมด (Reset Filters)">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                      stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>รีเซ็ต</span>
+                  </button>
+                </div>
+                <div class="card-actions">
+                  <span class="badge-pea-tag" id="timelineChartUnitBadge">% ปิดงานมูลค่า AUC</span>
+                  <button class="btn-pea-ai-tag" id="btnToggleAiAnalysis" onclick="window.toggleAiAnalysisSection()"
+                    title="ซ่อน/แสดง บทวิเคราะห์ AI" style="display: none;">
+                    <span class="ai-sparkle-icon">✨</span>
+                    <span>บทวิเคราะห์ AI</span>
+                    <span class="ai-live-dot" title="วิเคราะห์สดตามตัวกรอง"></span>
+                  </button>
+                  <button class="btn-fullscreen" onclick="toggleCardFullscreen(this)" title="ขยายกราฟเต็มหน้าจอ">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                      </path>
+                    </svg>
+                    <span>ขยายเต็มจอ</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- VIEW MODE SELECTOR (ปุ่มเลือกโหมดการแสดงผลกราฟ: % สะสม / จำนวนเงิน / แสดงทั้ง 2 กราฟ) -->
+              <div class="timeline-view-mode-bar" id="timelineViewModeBar">
+                <div class="timeline-view-mode-tabs">
+                  <button type="button" class="btn-timeline-mode" id="btnTimelineModePct"
+                    onclick="window.setTimelineChartMode('pct')" title="แสดงเฉพาะกราฟร้อยละความก้าวหน้า (% เทียบ KPI)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.3">
+                      <line x1="18" y1="20" x2="18" y2="10"></line>
+                      <line x1="12" y1="20" x2="12" y2="4"></line>
+                      <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>ร้อยละ % ปิดงานสะสม</span>
+                  </button>
+                  <button type="button" class="btn-timeline-mode" id="btnTimelineModeAmount"
+                    onclick="window.setTimelineChartMode('amount')"
+                    title="แสดงเฉพาะกราฟจำนวนเงินภาพรวมมูลค่า AUC และปิดงานแล้ว">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.3">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+                      <line x1="12" y1="6" x2="12" y2="18"></line>
+                    </svg>
+                    <span>จำนวนเงินมูลค่า AUC (ภาพรวม & ปิดงานแล้ว)</span>
+                  </button>
+                  <button type="button" class="btn-timeline-mode active" id="btnTimelineModeBoth"
+                    onclick="window.setTimelineChartMode('both')"
+                    title="แสดงทั้ง 2 กราฟคู่ขนาน (เปรียบเทียบทั้ง % และ จำนวนเงิน)">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                      stroke-width="2.3">
+                      <rect x="3" y="3" width="7" height="18" rx="1"></rect>
+                      <rect x="14" y="3" width="7" height="18" rx="1"></rect>
+                    </svg>
+                    <span>แสดงทั้ง 2 กราฟคู่ขนาน</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- ==========================================
+                   SECTION 1: กราฟร้อยละ % ปิดงานสะสม (เดิม)
+                   ========================================== -->
+              <div class="timeline-chart-section" id="timelinePctSection">
+                <!-- ACTIVE CRITERIA & AREA INFO STRIP (แถบแสดงเกณฑ์วัดและพื้นที่ที่เลือก) -->
+                <div class="timeline-active-info-strip" id="timelineActiveInfoStrip">
+                  <div class="timeline-info-left">
+                    <span class="info-label">เกณฑ์ที่เลือก:</span>
+                    <strong class="info-val-criteria" id="timelineSelectedCriteriaLabel">ข้อ 1.1 งบ C.1 ก่อน 69</strong>
+                    <span class="badge-pea-tag" id="timelineSelectedUnitLabel">% ปิดงานมูลค่า AUC</span>
+                    <span class="info-divider">|</span>
+                    <span class="info-label">พื้นที่:</span>
+                    <strong class="info-val-province" id="timelineSelectedProvinceLabel">กฟก.3 (ทั้งหมด)</strong>
+                  </div>
+                </div>
+
+                <!-- แถบแสดง/ซ่อนเส้นกราฟ (ปุ่มติ๊ก แสดง-ไม่แสดง) -->
+                <div class="timeline-legend-container" id="timelineLegendContainer">
+                  <div class="timeline-legend-header">
+                    <span class="timeline-legend-title">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>กดปุ่มติ๊กเพื่อแสดง / ซ่อนเส้นกราฟ:</span>
+                    </span>
+                    <div class="timeline-legend-actions">
+                      <button type="button" class="btn-legend-action" onclick="window.toggleAllTimelineSeries(true)"
+                        title="แสดงเส้นกราฟทั้งหมด">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.5">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>แสดงทั้งหมด</span>
+                      </button>
+                      <button type="button" class="btn-legend-action" onclick="window.toggleAllTimelineSeries(false)"
+                        title="ซ่อนเส้นกราฟทั้งหมด">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.5">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <span>ซ่อนทั้งหมด</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="timeline-legend-items" id="timelineInteractiveLegend"></div>
+                </div>
+
+                <div class="timeline-chart-flex-row">
+                  <div class="chart-container timeline-chart-canvas-wrap" style="height: 295px;">
+                    <canvas id="monthlyTimelineChart"></canvas>
+                  </div>
+                  <div class="timeline-growth-table-wrap" id="timelinePctGrowthTableWrap">
+                    <!-- Populated dynamically: 2-column table with Month, % and Average row -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- ==========================================
+                   SECTION 2: กราฟจำนวนเงินภาพรวมมูลค่า AUC & ปิดงานแล้ว (ใหม่!)
+                   ========================================== -->
+              <div class="timeline-chart-section" id="timelineAmountSection">
+                <div class="timeline-section-divider"></div>
+
+                <!-- ACTIVE AMOUNT INFO STRIP -->
+                <div class="timeline-active-info-strip timeline-amount-info-strip" id="timelineAmountActiveInfoStrip">
+                  <div class="timeline-info-left">
+                    <span class="info-label">ข้อมูลจำนวนเงิน:</span>
+                    <strong class="info-val-criteria" id="timelineAmountCriteriaLabel">ข้อ 1.1 งบ C.1 ก่อน 69</strong>
+                    <span class="badge-pea-tag badge-pea-gold" id="timelineAmountUnitLabel">มูลค่า (ล้านบาท)</span>
+                    <span class="info-divider">|</span>
+                    <span class="info-label">พื้นที่:</span>
+                    <strong class="info-val-province" id="timelineAmountProvinceLabel">กฟก.3 (ทั้งหมด)</strong>
+                  </div>
+                  <div class="timeline-amount-summary-pills" id="timelineAmountSummaryPills">
+                    <span class="timeline-stat-pill pill-total" id="pillAmountTotal" title="ภาพรวมมูลค่า AUC ทั้งหมด">
+                      <span class="stat-pill-dot"
+                        style="background:#FFB81C; box-shadow: 0 0 6px rgba(255, 184, 28, 0.65);"></span>
+                      <span class="stat-pill-label">รวมมูลค่า:</span>
+                      <strong class="stat-pill-val text-gold" style="color:#FFD25A;"
+                        id="timelineAmountTotalVal">-</strong>
+                    </span>
+                    <span class="timeline-stat-pill pill-closed" id="pillAmountClosed" title="ปิดงานมูลค่า AUC แล้ว">
+                      <span class="stat-pill-dot" style="background:#10B981;"></span>
+                      <span class="stat-pill-label">ปิดงานแล้ว:</span>
+                      <strong class="stat-pill-val text-success" id="timelineAmountClosedVal">-</strong>
+                    </span>
+                    <span class="timeline-stat-pill pill-remain" id="pillAmountRemain" title="คงเหลือมูลค่า AUC">
+                      <span class="stat-pill-dot" style="background:#EF4444;"></span>
+                      <span class="stat-pill-label">คงเหลือ:</span>
+                      <strong class="stat-pill-val text-danger" id="timelineAmountRemainVal">-</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- แถบแสดง/ซ่อนเส้นกราฟจำนวนเงิน -->
+                <div class="timeline-legend-container" id="timelineAmountLegendContainer">
+                  <div class="timeline-legend-header">
+                    <span class="timeline-legend-title">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                      <span>กดปุ่มติ๊กเพื่อแสดง / ซ่อนเส้นกราฟจำนวนเงิน:</span>
+                    </span>
+                    <div class="timeline-legend-actions">
+                      <button type="button" class="btn-legend-action"
+                        onclick="window.toggleAllTimelineAmountSeries(true)" title="แสดงเส้นกราฟจำนวนเงินทั้งหมด">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.5">
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        <span>แสดงทั้งหมด</span>
+                      </button>
+                      <button type="button" class="btn-legend-action"
+                        onclick="window.toggleAllTimelineAmountSeries(false)" title="ซ่อนเส้นกราฟจำนวนเงินทั้งหมด">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2.5">
+                          <line x1="18" y1="6" x2="6" y2="18"></line>
+                          <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <span>ซ่อนทั้งหมด</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="timeline-legend-items" id="timelineAmountInteractiveLegend"></div>
+                </div>
+
+                <div class="timeline-chart-flex-row">
+                  <div class="chart-container timeline-chart-canvas-wrap" style="height: 295px;">
+                    <canvas id="monthlyAmountTimelineChart"></canvas>
+                  </div>
+                  <div class="timeline-growth-table-wrap" id="timelineAmountGrowthTableWrap">
+                    <!-- Populated dynamically: 2-column table with Month, Amount/Growth and Average row -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI SMART EXECUTIVE ANALYSIS PANEL -->
+              <div class="ai-analysis-panel" id="timelineAiAnalysisPanel" style="display: none;"></div>
+            </div>
+
+
+
+            <!-- The Provincial Overview and 8 Criteria sections have been removed as requested -->
+
+          </div>
+
+          <!-- ==========================================
+          TAB WBS: WBS REMAINING JOBS TRACKING (03 WBSคงเหลือ)
+          ========================================== -->
+          <div id="tab-wbs" class="tab-pane">
+
+            <!-- WBS BANNER CARD -->
+            <div class="wbs-banner-card">
+              <div class="wbs-banner-left">
+                <div class="wbs-banner-icon">
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    <path d="M9 12h6"></path>
+                    <path d="M9 16h6"></path>
+                    <circle cx="12" cy="8" r="1" fill="currentColor"></circle>
+                  </svg>
+                </div>
+                <div>
+                  <div class="wbs-banner-title">
+                    <span>รายงานติดตามงาน WBS คงเหลือ</span>
+                    <span class="badge-pea-tag">ฐานหลักไฟล์ 03 WBS ผสานไฟล์ 04, 05 และ 06 (Google Sheet)</span>
+                  </div>
+                  <div class="wbs-banner-subtitle">
+                    รายการงานก่อสร้างและขึ้นทะเบียนทรัพย์สินคงเหลือรายโครงการ เชื่อมโยงตัวกรองหลักแบบเรียลไทม์
+                  </div>
+                </div>
+              </div>
+
+              <div class="wbs-banner-actions">
+                <!-- Active Filter Summary Pills -->
+                <div class="wbs-active-pills" id="wbsActiveFilterPills"></div>
+
+                <!-- Export CSV Button -->
+                <button type="button" class="btn btn-gold btn-sm" id="btnExportWbsCsv" onclick="window.exportWbsToCsv()"
+                  title="ส่งออกข้อมูล WBS เป็นไฟล์ CSV/Excel สำหรับเปิดในโปรแกรม Excel">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                  </svg>
+                  <span>ส่งออก WBS (CSV)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4 KPI SUMMARY CARDS (ถูกนำออกตามคำสั่งผู้ใช้งาน - คอมเมนต์ปิดไว้)
+            <div class="wbs-stats-grid">
+              [Card 1: Total Jobs]
+              <div class="wbs-stat-card card-wbs-pink">
+                <div class="stat-card-icon-wrap"
+                  style="background: rgba(255, 121, 184, 0.18); color: var(--sweet-pink);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                  </svg>
+                </div>
+                <div class="stat-card-content">
+                  <div class="stat-card-label">งาน WBS คงเหลือรวม (ตามตัวกรอง)</div>
+                  <div class="stat-card-val" id="wbsStatTotalJobs" style="color: var(--sweet-pink);">0</div>
+                  <div class="stat-card-sub" id="wbsStatTotalJobsSub">จากทั้งหมด 2,968 รายการ</div>
+                </div>
+              </div>
+
+              [Card 2: Impacted Offices]
+              <div class="wbs-stat-card card-wbs-gold">
+                <div class="stat-card-icon-wrap"
+                  style="background: rgba(255, 184, 28, 0.18); color: var(--pea-gold-400);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M3 21h18M3 7v14M21 7v14M6 11h2M6 15h2M16 11h2M16 15h2M10 21v-4h4v4M9 3h6v4H9z"></path>
+                  </svg>
+                </div>
+                <div class="stat-card-content">
+                  <div class="stat-card-label">หน่วยงานที่เกี่ยวข้อง (กฟฟ./กอง)</div>
+                  <div class="stat-card-val" id="wbsStatTotalOffices" style="color: var(--pea-gold-400);">0</div>
+                  <div class="stat-card-sub" id="wbsStatTotalOfficesSub">กฟฟ. ในสังกัด กฟก.3</div>
+                </div>
+              </div>
+
+              [Card 3: Responsible Engineers]
+              <div class="wbs-stat-card card-wbs-cyan">
+                <div class="stat-card-icon-wrap" style="background: rgba(6, 182, 212, 0.18); color: #06B6D4;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                  </svg>
+                </div>
+                <div class="stat-card-content">
+                  <div class="stat-card-label">ช่างคุมงานผู้รับผิดชอบ</div>
+                  <div class="stat-card-val" id="wbsStatTotalEngineers" style="color: #38BDF8;">0</div>
+                  <div class="stat-card-sub" id="wbsStatTotalEngineersSub">วิศวกร/ช่างควบคุมงาน</div>
+                </div>
+              </div>
+
+              [Card 4: Budget Breakdown]
+              <div class="wbs-stat-card card-wbs-emerald">
+                <div class="stat-card-icon-wrap" style="background: rgba(16, 185, 129, 0.18); color: #10B981;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+                    <line x1="12" y1="6" x2="12" y2="18"></line>
+                  </svg>
+                </div>
+                <div class="stat-card-content">
+                  <div class="stat-card-label">สัดส่วนหมวดงบประมาณ</div>
+                  <div class="wbs-budget-pills-row" id="wbsStatBudgetBreakdown"></div>
+                  <div class="stat-card-sub" style="margin-top:0.25rem;">แยกตามประเภทงบ C / I / P</div>
+                </div>
+              </div>
+            </div>
+            -->
+
+            <!-- TARGET COMPARISON & PROGRESS SIMULATION SECTION (เปรียบเทียบเป้าหมาย KPI ระดับ 5 กับ CLSD F4/F2 + รายการที่เลือก) - ย้ายไว้ด้านบนตามคำสั่งผู้ใช้งาน -->
+            <div id="wbsTargetComparisonSection" class="wbs-target-comparison-wrap"></div>
+
+            <!-- VISUAL ANALYTICS: OFFICES WITH REMAINING WBS BAR CHART -->
+            <div class="content-card" style="margin-bottom: 1.25rem;">
+              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <div class="card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                  </svg>
+                  <span id="wbsOfficesChartTitle">กอง/กฟฟ. ที่มีงาน WBS คงเหลือ</span>
+                  <span id="wbsOfficesChartCountBadge" class="tab-badge" style="background:rgba(255,210,90,0.18); color:#FFD25A; border:1px solid rgba(255,210,90,0.35); font-size:0.75rem; padding:0.15rem 0.55rem; border-radius:12px; margin-left:6px; font-weight:600;"></span>
+                  <!-- ป้ายแสดงมูลค่ารวมที่เลือกตามคำสั่งผู้ใช้งาน (แสดงมูลค่ารวม ที่เลือกด้วย) -->
+                  <span id="wbsOfficesChartAucBadge" class="tab-badge" style="background:rgba(56,189,248,0.18); color:#38BDF8; border:1px solid rgba(56,189,248,0.35); font-size:0.75rem; padding:0.15rem 0.55rem; border-radius:12px; margin-left:6px; font-weight:700;"></span>
+                </div>
+                <!-- ปุ่มแอ็กชันด้านบนขวา: เลือกทุกสถานะ & ล้างข้อมูล -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <button type="button" class="btn-wbs-card-select-all" id="wbsOfficeChartSelectAllBtn"
+                    onclick="window.selectAllWbsSapStatuses()"
+                    title="เลือกการ์ดสถานะ SAP ทั้งหมด (แสดงข้อมูลทุกสถานะ)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M7 12l5 5L22 7"></path>
+                      <path d="M2 12l5 5L9 15"></path>
+                    </svg>
+                    <span>เลือกทุกสถานะ</span>
+                  </button>
+                  <button type="button" class="btn-wbs-card-clear" id="wbsOfficeChartClearBtn"
+                    onclick="window.clearAllWbsSelection()"
+                    title="ล้างข้อมูลทุกสถานะ (ทั้งสถานะการ์ด กราฟ และรายการที่เลือก)">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    <span id="wbsOfficeChartClearLabel">ล้างข้อมูลทุกสถานะ</span>
+                    <span id="wbsOfficeChartClearCount" class="btn-clear-count" style="display:none;"></span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- SAP STATUS SUMMARY SECTION (ย้ายมารวมไว้ในการ์ดกราฟตามตำแหน่งกรอบสีน้ำเงินของผู้ใช้งาน) -->
+              <div id="wbsSapSummarySection" class="wbs-sap-summary-integrated"></div>
+
+              <div class="chart-container" id="wbsOfficesChartContainer" style="min-height: 290px; position:relative; overflow-x: auto; overflow-y: hidden;">
+                <canvas id="wbsOfficesBarChart"></canvas>
+              </div>
+            </div>
+
+            <!-- SELECTED WBS ITEMS SUMMARY CARD (ซ่อน/นำออกตามคำสั่งผู้ใช้งาน โดยย้ายการแสดงผล Checkbox ไปรวมไว้ในการ์ด SAP ด้านบน และย้ายปุ่มล้างข้อมูลที่เลือกไปไว้ด้านบนขวา) -->
+            <div id="wbsSelectedSummaryCard" class="wbs-selected-summary-wrap" style="display:none;"></div>
+
+            <!-- MASTER WBS DATA TABLE CARD -->
+            <div class="table-card" id="wbsTableCard">
+              <div class="table-header-bar">
+                <div style="display:flex; align-items:center; gap:0.75rem; flex-wrap:wrap; flex:1;">
+
+
+                  <!-- ประเภทเกณฑ์วัดแสดงด้านบนแทนคอลัมน์ในตาราง -->
+                  <div class="wbs-table-active-criteria" id="wbsTableActiveCriteria"
+                    title="ประเภทเกณฑ์วัดที่กำลังแสดงผล">
+                    <span class="criteria-tag-icon">📌</span>
+                    <span class="criteria-tag-label">เกณฑ์วัด:</span>
+                    <strong class="criteria-tag-val" id="wbsTableActiveCriteriaVal">ข้อ 1.1 งบ C.1 ก่อน 69</strong>
+                  </div>
+                </div>
+
+                <!-- Pagination Stats & Rows per page & Column Visibility Selector -->
+                <div style="display:flex; align-items:center; gap:0.85rem; flex-wrap:wrap;">
+                  <!-- ปุ่มเลือกแสดงคอลัมน์ (Column Selector Dropdown) -->
+                  <div class="wbs-col-dropdown-wrap" id="wbsColDropdownWrap">
+                    <button type="button" class="btn-wbs-col-toggle" id="btnWbsColToggle"
+                      onclick="window.toggleWbsColDropdown(event)" title="เลือกคอลัมน์ที่ต้องการแสดงในตาราง WBS">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path
+                          d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18" />
+                      </svg>
+                      <span>เลือกคอลัมน์</span>
+                      <span class="wbs-col-count-badge" id="wbsColCountBadge">8/9</span>
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+
+                    <!-- Popover Dropdown Panel -->
+                    <div class="wbs-col-dropdown-panel" id="wbsColDropdownPanel" style="display:none;">
+                      <div class="col-panel-header">
+                        <div class="col-panel-title">
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                            <line x1="9" y1="3" x2="9" y2="21" />
+                          </svg>
+                          <span>เลือกคอลัมน์ที่ต้องการแสดง</span>
+                        </div>
+                        <div class="col-panel-links">
+                          <button type="button" class="btn-col-link btn-col-link-default"
+                            onclick="window.setWbsColsDefaultPreset()"
+                            title="ตั้งค่าแสดงผลคอลัมน์และลำดับเริ่มต้นตามรูป (11 คอลัมน์)">Default</button>
+                          <span class="col-link-divider">•</span>
+                          <button type="button" class="btn-col-link"
+                            onclick="window.setAllWbsCols(true)">เปิดทั้งหมด</button>
+                        </div>
+                      </div>
+
+                      <!-- Column View Mode Bar: Reorder List -->
+                      <div class="col-view-mode-bar">
+                        <button type="button" class="btn-col-mode active" id="btnModeOrder"
+                          onclick="window.setWbsColViewMode('order')"
+                          title="แสดงคอลัมน์เรียงตามลำดับจริงในตาราง สามารถลากหรือกดเลื่อนได้">↕️ ลำดับการแสดง
+                          (1-41)</button>
+                      </div>
+
+                      <!-- Real-time Column Search Input -->
+                      <div class="col-search-box">
+                        <span class="col-search-icon">🔍</span>
+                        <input type="text" class="col-search-input" id="wbsColSearchInput"
+                          placeholder="ค้นหาชื่อคอลัมน์..." oninput="window.filterWbsColCheckboxes(this.value)">
+                      </div>
+
+                      <div class="col-panel-list" id="wbsColCheckboxList"></div>
+                    </div>
+                  </div>
+
+                  <div class="table-stats-info">
+                    แสดงข้อมูลรายการที่ <strong id="wbsPageRange">0 - 0</strong> จากที่กรองได้ <strong
+                      id="wbsFilteredCount">0</strong> รายการ
+                  </div>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <label style="font-size:0.8rem; color:var(--text-muted);">แถวต่อหน้า:</label>
+                    <select class="form-select" id="wbsPageSizeSelect"
+                      style="width:80px; padding:0.35rem 0.5rem; font-size:0.8rem;">
+                      <option value="15">15</option>
+                      <option value="25" selected>25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999">ทั้งหมด</option>
+                    </select>
+                  </div>
+
+                  <!-- ปุ่มขยายเต็มหน้าจอ (Fullscreen Table Toggle) -->
+                  <button type="button" class="btn-wbs-fullscreen" id="btnWbsTableFullscreen"
+                    onclick="window.toggleTableFullscreen(this)" title="ขยายตารางเต็มหน้าจอ">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                      </path>
+                    </svg>
+                    <span>ขยายเต็มจอ</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Floating Multi-select SAP Status Dropdown Panel (ป๊อปอัปตัวกรองสถานะ SAP หลายประเภท) -->
+              <div class="wbs-sap-dropdown-panel" id="wbsSapThDropdownPanel" style="display:none;" onclick="event.stopPropagation()">
+                <div class="sap-dropdown-panel-header">
+                  <div class="sap-dropdown-panel-title">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                      <polygon points="6 9 12 15 18 9"></polygon>
+                    </svg>
+                    <span>ตัวกรองสถานะ SAP</span>
+                  </div>
+                </div>
+                <div class="sap-dropdown-list" id="wbsSapThDropdownList">
+                  <!-- Populated dynamically by renderWbsSapThDropdownList() -->
+                </div>
+                <div class="sap-dropdown-footer">
+                  <span class="sap-dropdown-summary" id="wbsSapDropdownSummaryText">แสดงทุกสถานะ</span>
+                </div>
+              </div>
+
+              <!-- Table Element with Left-side Synchronized Scrollbar -->
+              <div class="wbs-table-scroll-wrapper" id="wbsTableScrollWrapper">
+                <!-- Left-side vertical scrollbar / slider track with Top & Bottom Jump Buttons (มีทั้งด้านบนและด้านล่าง) -->
+                <div class="wbs-left-scrollbar" id="wbsLeftScrollbar" role="scrollbar" aria-orientation="vertical"
+                  aria-label="แถบสไลด์เลื่อนตารางขึ้น-ลงด้านซ้าย" title="สไลด์เลื่อนข้อมูลตารางขึ้น-ลง (ฝั่งซ้าย)">
+                  <!-- กลุ่มด้านบน (Top Group) -->
+                  <!-- 1. ปุ่มไปบนสุด (Topmost) -->
+                  <button type="button" class="btn-wbs-scrollbar-step top" id="btnWbsLeftScrollToTop"
+                    onclick="window.scrollWbsTableToTop()" title="ไปบนสุดของตาราง (Topmost)">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                      <polyline points="18 13 12 7 6 13"></polyline>
+                      <polyline points="18 19 12 13 6 19"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- 2. ปุ่มไปล่างสุด (Bottommost จากด้านบน) -->
+                  <button type="button" class="btn-wbs-scrollbar-step bottom" id="btnWbsLeftScrollToBottomTopGroup"
+                    onclick="window.scrollWbsTableToBottom()" title="ไปล่างสุดของตาราง (Bottommost)">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                      <polyline points="6 11 12 17 18 11"></polyline>
+                      <polyline points="6 5 12 11 18 5"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- 3. ปุ่มเลื่อนขึ้นทีละช่วง (Step Up) -->
+                  <button type="button" class="btn-wbs-scrollbar-step up" id="btnWbsLeftScrollUp"
+                    onclick="window.scrollWbsTableStepUp()" title="เลื่อนตารางขึ้น (Up)">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="18 15 12 9 6 15"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- แถบสไลด์ Track & Thumb -->
+                  <div class="wbs-left-scrollbar-track" id="wbsLeftScrollbarTrack" title="คลิกหรือลากแถบสไลด์นี้เพื่อเลื่อนตาราง">
+                    <div class="wbs-left-scrollbar-thumb" id="wbsLeftScrollbarThumb">
+                      <span class="wbs-thumb-grip"></span>
+                    </div>
+                  </div>
+
+                  <!-- กลุ่มด้านล่าง (Bottom Group) -->
+                  <!-- 4. ปุ่มเลื่อนลงทีละช่วง (Step Down) -->
+                  <button type="button" class="btn-wbs-scrollbar-step down" id="btnWbsLeftScrollDown"
+                    onclick="window.scrollWbsTableStepDown()" title="เลื่อนตารางลง (Down)">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- 5. ปุ่มไปบนสุด (Topmost จากด้านล่าง) -->
+                  <button type="button" class="btn-wbs-scrollbar-step top" id="btnWbsLeftScrollToTopBottomGroup"
+                    onclick="window.scrollWbsTableToTop()" title="ไปบนสุดของตาราง (Topmost)">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                      <polyline points="18 13 12 7 6 13"></polyline>
+                      <polyline points="18 19 12 13 6 19"></polyline>
+                    </svg>
+                  </button>
+
+                  <!-- 6. ปุ่มไปล่างสุด (Bottommost) -->
+                  <button type="button" class="btn-wbs-scrollbar-step bottom" id="btnWbsLeftScrollToBottom"
+                    onclick="window.scrollWbsTableToBottom()" title="ไปล่างสุดของตาราง (Bottommost)">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8">
+                      <polyline points="6 11 12 17 18 11"></polyline>
+                      <polyline points="6 5 12 11 18 5"></polyline>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Table Container -->
+                <div class="table-responsive" id="wbsTableResponsive">
+                  <table class="data-table" id="wbsDataTable">
+                    <thead id="wbsTableHead">
+                      <tr>
+                        <th style="width: 55px; text-align: center;" onclick="window.sortWbsTable('id')">ลำดับ</th>
+                        <th style="min-width: 220px;" onclick="window.sortWbsTable('wbs')">WBS (เลขที่งาน)</th>
+                        <th style="min-width: 100px;" onclick="window.sortWbsTable('province')">พื้นที่</th>
+                        <th style="min-width: 150px;" onclick="window.sortWbsTable('office')">กอง / กฟฟ.</th>
+                        <th style="width: 75px; text-align: center;" onclick="window.sortWbsTable('budget')">งบ</th>
+                        <th style="min-width: 180px;" onclick="window.sortWbsTable('engineer')">ช่างคุมงาน</th>
+                        <th style="min-width: 160px;" onclick="window.sortWbsTable('department')">สังกัด</th>
+                        <th style="width: 85px; text-align: center;" onclick="window.sortWbsTable('type')">ประเภท</th>
+                      </tr>
+                    </thead>
+                    <tbody id="wbsTableBody"></tbody>
+                    <tfoot id="wbsTableFoot"></tfoot>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Pagination Footer -->
+              <div class="table-pagination-bar" id="wbsPaginationBar"
+                style="padding: 0.85rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 0.75rem;">
+                <div style="font-size: 0.85rem; color: var(--text-dim);" id="wbsPaginationInfoText">
+                  หน้า 1 จาก 1
+                </div>
+                <div class="pagination-controls" id="wbsPaginationControls"
+                  style="display: flex; gap: 0.35rem; align-items: center;"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ==========================================
+         TAB 2: VISUAL ANALYTICS & TIMELINE
+         ========================================== -->
+          <div id="tab-analytics" class="tab-pane">
+            <!-- RANKINGS: Top & Bottom Leaderboards -->
+            <div class="dashboard-grid-2col">
+              <div class="content-card">
+                <div class="card-header">
+                  <div class="card-title" style="color:#10B981;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                      </path>
+                    </svg>
+                    หน่วยงานที่มีผลการดำเนินงานสูงสุด 5 อันดับแรก (Top 5 Units)
+                  </div>
+                  <span class="kpi-score-badge kpi-score-5">KPI ยอดเยี่ยม</span>
+                </div>
+                <div id="topRankingsList" style="padding-top:0.5rem;"></div>
+              </div>
+
+              <div class="content-card">
+                <div class="card-header">
+                  <div class="card-title" style="color:#EF4444;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <line x1="12" y1="8" x2="12" y2="12"></line>
+                      <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    หน่วยงานที่ต้องเร่งรัดดำเนินการปิดงาน 5 อันดับแรก (Action Required)
+                  </div>
+                  <span class="kpi-score-badge kpi-score-1">ต้องเร่งรัด</span>
+                </div>
+                <div id="bottomRankingsList" style="padding-top:0.5rem;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ==========================================
+         TAB 3: INTERACTIVE DATA MATRIX (นำออกตามคำขอ: เอาเมนู ตารางสืบค้นข้อมูลออก)
+         ==========================================
+          <div id="tab-table" class="tab-pane">
+            <div class="table-card" id="aucTableCard">
+              <div class="table-header-bar">
+                <div class="table-stats-info">
+                  แสดงข้อมูลรายการที่ <strong id="tablePageRange">0 - 0</strong> จากทั้งหมด <strong
+                    id="tableTotalCount">0</strong> รายการ
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <label style="font-size:0.8rem; color:var(--text-muted);">แสดงแถวต่อหน้า:</label>
+                  <select class="form-select" id="pageSizeSelect"
+                    style="width:80px; padding:0.35rem 0.5rem; font-size:0.8rem;">
+                    <option value="15">15</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                  </select>
+                  <button type="button" class="btn-wbs-fullscreen" id="btnAucTableFullscreen"
+                    onclick="window.toggleTableFullscreen(this)" title="ขยายตารางเต็มหน้าจอ">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path
+                        d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+                      </path>
+                    </svg>
+                    <span>ขยายเต็มจอ</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th style="width:50px; text-align:center;">#</th>
+                      <th data-sort="office">กอง/กฟฟ.</th>
+                      <th data-sort="province">จังหวัด</th>
+                      <th data-sort="criteria">ประเภทเกณฑ์วัด</th>
+                      <th style="text-align:center;">หน่วยวัด</th>
+                      <th data-sort="totalValue" style="text-align:right;">รวมงาน/มูลค่า</th>
+                      <th data-sort="closedValue" style="text-align:right;">ปิดงานแล้ว</th>
+                      <th data-sort="remainingValue" style="text-align:right;">คงเหลือ</th>
+                      <th data-sort="latestPercent" style="min-width:140px;">% ปิดงาน</th>
+                      <th data-sort="kpiScore" style="width:80px; text-align:center;">KPI</th>
+                      <th style="width:120px; text-align:center;">จัดการ</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aucTableBody"></tbody>
+                </table>
+              </div>
+
+              <div class="table-pagination-bar">
+                <div class="pagination-controls">
+                  <button class="page-btn" id="btnPrevPage">‹ ก่อนหน้า</button>
+                  <div id="paginationNumbers" style="display:flex; gap:4px;"></div>
+                  <button class="page-btn" id="btnNextPage">ถัดไป ›</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          -->
+
+          <!-- ==========================================
+         TAB 4: EARLY WARNING & ACTION CENTER
+         ========================================== -->
+          <div id="tab-warning" class="tab-pane">
+            <div class="content-card" style="margin-bottom:1.5rem;">
+              <div class="card-header">
+                <div class="card-title" style="color:#F59E0B;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  ศูนย์วิเคราะห์และแจ้งเตือนจุดวิกฤตงานก่อสร้างและทรัพย์สิน AUC (Early Warning Center)
+                </div>
+              </div>
+              <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
+                ระบบคัดกรองหน่วยงานและเกณฑ์วัดที่อยู่ในเกณฑ์เฝ้าระวังพิเศษ (คะแนน KPI ≤ 2 หรือมียอดคงค้างสูงเกินเกณฑ์)
+                พร้อมข้อเสนอแนะเชิงปฏิบัติการเพื่อเร่งรัดปิดงานตามแผน
+              </p>
+
+              <div id="earlyWarningList"></div>
+            </div>
+          </div>
+
+          <!-- ==========================================
+         TAB 5: AUC WORKFLOW TRACKER
+         ========================================== -->
+          <!-- ==========================================
+          TAB: DATA IMPORT & MODIFICATION HISTORY (MODEL VIEW)
+          ========================================== -->
+          <div id="tab-data-history" class="tab-pane"></div>
+
+          <!-- ==========================================
+          TAB: ขั้นตอนงานก่อสร้าง (นำออกตามคำขอ: ลบเมนู ขั้นตอนงานก่อสร้าง)
+          ==========================================
+          <div id="tab-workflow" class="tab-pane">
+            <div class="content-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                  </svg>
+                  กระบวนการมาตรฐานการติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน AUC (5 ขั้นตอน)
+                </div>
+              </div>
+
+              <div class="workflow-stepper">
+                <div class="workflow-step-card completed">
+                  <div class="step-number-badge">1</div>
+                  <div class="step-title">เปิด WBS & ผูกพันงบ</div>
+                  <div class="step-desc">สร้างรหัสโครงการในระบบ SAP บันทึกประมาณการ และผูกพันงบประมาณจัดซื้อจัดจ้าง
+                  </div>
+                </div>
+
+                <div class="workflow-step-card completed">
+                  <div class="step-number-badge">2</div>
+                  <div class="step-title">ดำเนินการก่อสร้าง & จ่ายไฟ</div>
+                  <div class="step-desc">ผู้รับจ้าง/พนักงานก่อสร้างแล้วเสร็จ ตรวจสอบความปลอดภัยและจ่ายไฟเข้าระบบ
+                    (Energize)</div>
+                </div>
+
+                <div class="workflow-step-card active">
+                  <div class="step-number-badge">3</div>
+                  <div class="step-title">ตรวจรับงานทางเทคนิค (TECO)</div>
+                  <div class="step-desc">ส่งมอบงานทางเทคนิค บันทึก TECO ในระบบ SAP ยืนยันว่างานก่อสร้างเสร็จสิ้นสมบูรณ์
+                  </div>
+                </div>
+
+                <div class="workflow-step-card">
+                  <div class="step-number-badge">4</div>
+                  <div class="step-title">รวบรวมเอกสาร & ชำระบัญชี</div>
+                  <div class="step-desc">สรุปค่าใช้จ่ายจริง ค่าแรง พัสดุ และจัดทำใบผ่านรายการตั้งหนี้ชำระบัญชี</div>
+                </div>
+
+                <div class="workflow-step-card">
+                  <div class="step-number-badge">5</div>
+                  <div class="step-title">ขึ้นทะเบียนทรัพย์สินถาวร</div>
+                  <div class="step-desc">ตัดจ่ายจาก AUC เข้าบัญชีสินทรัพย์ถาวร (Asset Capitalization) และปิด WBS สมบูรณ์
+                    100%</div>
+                </div>
+              </div>
+
+              <div
+                style="background:rgba(20,5,30,0.5); padding:1.25rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-top:1.5rem;">
+                <h3 style="font-size:0.95rem; font-weight:700; color:var(--pea-gold-400); margin-bottom:0.5rem;">
+                  แนวทางการเร่งรัดและข้อปฏิบัติตามเกณฑ์ KPI การไฟฟ้าส่วนภูมิภาค
+                </h3>
+                <ul style="font-size:0.85rem; color:var(--text-muted); padding-left:1.25rem; line-height:1.7;">
+                  <li>งานที่จ่ายไฟแล้วเกิน 30 วัน ต้องเร่งดำเนินการตรวจรับงานทางเทคนิค (TECO) ทันที</li>
+                  <li>งานงบ C.1 และงบลงทุน I, P ที่ก่อสร้างเสร็จสิ้นก่อนปี 2569
+                    ต้องเร่งปิดยอดคงค้างให้ได้ตามเป้าหมายสะสมแต่ละไตรมาส</li>
+                  <li>ติดตามเอกสารใบส่งของและค่าใช้จ่ายจากผู้รับจ้างไม่ให้ค้างเกินรอบบัญชี
+                    เพื่อให้สามารถบันทึกขึ้นทะเบียนทรัพย์สินได้ทันตามรอบประเมิน KPI</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          -->
+
+        </div> <!-- /.dashboard-main-area -->
+      </div> <!-- /.app-layout-grid -->
+
+    </main>
+
+    <!-- ==========================================
+       MODAL: UPDATE EXCEL FILES PROGRESS & STATUS
+       ========================================== -->
+    <div class="modal-backdrop" id="excelUpdateModal" style="display:none;" role="dialog" aria-modal="true"
+      aria-labelledby="excelModalTitle">
+      <div class="modal-dialog excel-modal-dialog">
+        <div class="modal-header excel-modal-header">
+          <div class="excel-modal-title-group">
+            <div class="excel-icon-glow">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div>
+              <h2 id="excelModalTitle" class="excel-modal-title">อัปเดตข้อมูลไฟล์ Excel (โฟลเดอร์ 00AI)</h2>
+              <p class="excel-modal-subtitle">ดึงข้อมูลและประมวลผลไฟล์รายงาน AUC รายเดือนจากโฟลเดอร์ 00AI</p>
+            </div>
+          </div>
+          <button class="btn-icon" id="btnCloseExcelModal" style="border:none; font-size:1.25rem;"
+            title="ปิดหน้าต่าง">✕</button>
+        </div>
+
+        <div class="modal-body excel-modal-body">
+          <!-- Live Progress Section (Tap %) -->
+          <div class="excel-progress-card">
+            <div class="excel-progress-meta">
+              <div class="excel-file-current">
+                <span class="excel-file-spinner" id="excelFileSpinner"></span>
+                <span class="excel-file-label">กำลังดำเนินการ:</span>
+                <span class="excel-file-name" id="excelCurrentFileName">เตรียมพร้อมเริ่มอ่านไฟล์...</span>
+              </div>
+              <div class="excel-percent-badge" id="excelProgressPercent">0%</div>
+            </div>
+
+            <!-- The Progress Bar (Tap %) -->
+            <div class="excel-progress-track">
+              <div class="excel-progress-fill" id="excelProgressBarFill" style="width: 0%;">
+                <span class="excel-progress-shine"></span>
+              </div>
+            </div>
+
+            <div class="excel-progress-summary">
+              <span id="excelProgressCount">กำลังตรวจสอบไฟล์... (0 / 12)</span>
+              <span id="excelProgressFolderInfo" class="excel-folder-badge">โฟลเดอร์: d:\กรย+++\00AI</span>
+            </div>
+          </div>
+
+          <!-- File Items Checklist / Log -->
+          <div class="excel-files-container">
+            <div class="excel-files-heading">
+              <span>รายการไฟล์ที่ตรวจพบและประมวลผล (12 เดือน)</span>
+              <span id="excelTotalRowsParsed" class="badge-total-rows">0 รายการ</span>
+            </div>
+            <div class="excel-files-list" id="excelFilesList">
+              <!-- Populated dynamically by app.js -->
+            </div>
+          </div>
+
+          <!-- Direct Folder Selection Fallback (When on file:/// origin) -->
+          <div id="excelLocalFilePrompt" class="excel-local-notice" style="display:none;">
+            <div class="excel-notice-icon">📂</div>
+            <div class="excel-notice-content">
+              <h4>เปิดผ่านโหมดไฟล์เครื่อง (file://)</h4>
+              <p>กรุณากดปุ่มด้านล่างเพื่อเลือกโฟลเดอร์ <b>00AI</b> ครั้งเดียว ระบบจะอ่านไฟล์ Excel ทั้ง 12
+                เดือนให้อัตโนมัติทันที</p>
+              <div style="margin-top: 0.6rem; display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-update-excel" id="btnPickFolder00AI">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                  </svg>
+                  <span>เลือกโฟลเดอร์ 00AI เพื่อเริ่มอัปเดต</span>
+                </button>
+              </div>
+              <input type="file" id="fallbackFolderInput" webkitdirectory directory multiple style="display:none;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer excel-modal-footer">
+          <div class="excel-footer-status" id="excelFooterStatus">
+            พร้อมดำเนินการ
+          </div>
+          <div class="excel-footer-actions">
+            <button type="button" class="btn btn-outline" id="btnRetryExcelUpdate"
+              style="display:none;">ลองใหม่อีกครั้ง</button>
+            <button type="button" class="btn btn-update-excel" id="btnFinishExcelModal" style="display:none;">เสร็จสิ้น
+              & ปิดหน้าต่าง</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       DRILLDOWN MODAL & SCENARIO SIMULATOR
+       ========================================== -->
+    <div class="modal-backdrop" id="drilldownModal">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <h2 id="modalOfficeName">รายละเอียดแผนงานรายเดือน</h2>
+            <div style="display:flex; gap:6px; margin-top:4px;">
+              <span class="badge-pea-tag" id="modalProvinceBadge">จังหวัด</span>
+              <span class="badge-pea-tag"
+                style="background:rgba(255,184,28,0.2); color:var(--pea-gold-400); border-color:var(--pea-gold-400);"
+                id="modalCriteriaBadge">เกณฑ์วัด</span>
+              <span class="badge-pea-tag" style="background:rgba(16,185,129,0.2); color:#10B981; border-color:#10B981;"
+                id="modalUnitBadge">หน่วยวัด</span>
+            </div>
+          </div>
+          <button class="btn-icon" id="modalCloseBtn" style="border:none; font-size:1.25rem;">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Summary Strip -->
+          <div
+            style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:1rem; background:rgba(20,5,30,0.6); padding:1rem; border-radius:var(--radius-md); border:1px solid var(--border-subtle); margin-bottom:1.25rem;">
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">รวมยอด AUC:</div>
+              <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);" id="modalTotalVal">-</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">ปิดงานแล้ว:</div>
+              <div style="font-size:1.1rem; font-weight:700; color:var(--pea-gold-400);" id="modalClosedVal">-</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">คงเหลือ:</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#EF4444;" id="modalRemainVal">-</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">% ปิดงาน:</div>
+              <div style="font-size:1.1rem; font-weight:700; color:#10B981;" id="modalPctVal">-</div>
+            </div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-dim);">คะแนน KPI:</div>
+              <div style="font-size:1.1rem; font-weight:700; color:var(--pea-gold-400);" id="modalKpiVal">-</div>
+            </div>
+          </div>
+
+          <!-- Monthly Timeline Chart -->
+          <div style="margin-bottom:1.25rem;">
+            <h4 style="font-size:0.875rem; font-weight:600; color:var(--text-main); margin-bottom:0.5rem;">
+              แผนการปิดงานและส่วนต่างรายเดือน (ม.ค. - ธ.ค.)
+            </h4>
+            <div class="chart-container" style="height:200px;">
+              <canvas id="modalTimelineChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Monthly Breakdown Table with Interactive Inputs -->
+          <div>
+            <h4 style="font-size:0.875rem; font-weight:600; color:var(--text-main); margin-bottom:0.5rem;">
+              ตารางแผนปิดงานรายเดือน & จำลองผลลัพธ์ (Scenario Calculator)
+            </h4>
+            <div class="table-responsive">
+              <table class="data-table" style="font-size:0.8rem;">
+                <thead>
+                  <tr>
+                    <th style="text-align:center;">เดือน</th>
+                    <th style="text-align:right;">แผนปิดงาน (แก้ไขเพื่อจำลอง)</th>
+                    <th style="text-align:center;">เป้าหมายสะสม %</th>
+                    <th style="text-align:right;">ส่วนต่างเทียบเป้า (Gap)</th>
+                  </tr>
+                </thead>
+                <tbody id="modalMonthlyTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary"
+            onclick="document.getElementById('modalCloseBtn').click()">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+       DATA HISTORY MODALS (MODEL VIEW & MANUAL AUDIT LOG)
+       ========================================== -->
+    <div class="modal-backdrop" id="dhModelViewModal" role="dialog" aria-modal="true">
+      <div class="modal-dialog dh-model-modal-dialog">
+        <div class="modal-content dh-model-modal-content" id="dhModelModalBody">
+          <!-- Dynamic Content Populated by openModelViewModal -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="dhAddLogModal" role="dialog" aria-modal="true">
+      <div class="modal-dialog" style="max-width:550px;">
+        <div class="modal-content">
+          <div class="modal-header">
+            <div class="modal-title" style="display:flex; align-items:center; gap:0.5rem;">
+              <span>➕</span>
+              <span>บันทึกประวัติการแก้ไขข้อมูล (Manual Audit Entry)</span>
+            </div>
+            <button class="modal-btn-close" onclick="window.closeDhAddLogModal()">✕</button>
+          </div>
+          <div class="modal-body" style="display:flex; flex-direction:column; gap:0.85rem;">
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">ประเภทการดำเนินการ:</label>
+              <select id="dhInputLogType" class="form-select">
+                <option value="EDIT">✏️ การแก้ไขข้อมูล (Data Modification)</option>
+                <option value="IMPORT">📥 การนำเข้าข้อมูล (Data Import)</option>
+                <option value="MERGE">🔄 การผสานรวมไฟล์ (Data Merge)</option>
+                <option value="CONFIG">⚙️ การตั้งค่าระบบ / ตัวกรอง (Configuration)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">หัวข้อ / รายการที่แก้ไข:</label>
+              <input type="text" id="dhInputTitle" class="form-input" placeholder="เช่น แก้ไขหมายเหตุ WBS หรือ อัปเดต % เบิกพัสดุ" />
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">ไฟล์ที่จัดเก็บข้อมูล:</label>
+              <input type="text" id="dhInputStorageFile" class="form-input" placeholder="เช่น js/data_wbs.js, 06 google sheet, localStorage" value="js/data_wbs.js" />
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">สิ่งที่แก้ไข (สรุป):</label>
+              <input type="text" id="dhInputSummary" class="form-input" placeholder="เช่น แก้ไขแผนปิดงานโครงการสายส่ง หรือ ปรับสูตรคำนวณ" />
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">รายละเอียดเชิงลึก (ก่อนแก้ ➡️ หลังแก้):</label>
+              <textarea id="dhInputDetails" class="form-input" rows="3" placeholder="ระบุเหตุผล หรือรายละเอียดสิ่งที่แก้ไข เช่น แก้ไขสถานะจาก REL D1 เป็น TECO D2..."></textarea>
+            </div>
+            <div>
+              <label style="font-size:0.8rem; color:var(--text-muted); font-weight:600; margin-bottom:0.25rem; display:block;">ผู้ดำเนินการ (ชื่อ/ตำแหน่ง):</label>
+              <input type="text" id="dhInputAuthor" class="form-input" value="ผู้ใช้งานระบบ (User)" />
+            </div>
+          </div>
+          <div class="modal-footer" style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button class="btn btn-outline" onclick="window.closeDhAddLogModal()">ยกเลิก</button>
+            <button class="btn btn-primary" onclick="window.submitCustomLog()">💾 บันทึกประวัติ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- Scripts -->
+  <script src="js/xlsx.full.min.js"></script>
+  <script src="js/data.js?v=20260925_1732"></script>
+  <script src="js/data_jan.js?v=20260925_1732"></script>
+  <script src="js/data_feb.js?v=20260925_1732"></script>
+  <script src="js/data_mar.js?v=20260925_1732"></script>
+  <script src="js/data_apr.js?v=20260925_1732"></script>
+  <script src="js/data_may.js?v=20260925_1732"></script>
+  <script src="js/data_jun.js?v=20260925_1732"></script>
+  <script src="js/data_aug.js?v=20260929_1655"></script>
+  <script src="js/kpi_matrix.js?v=20261003_0930"></script>
+  <script src="js/chart.js?v=20261017_2045"></script>
+  <script src="js/data_wbs.js?v=20261019_0848"></script>
+  <script src="js/wbs.js?v=20261019_0848"></script>
+  <script src="js/data_history.js?v=20261019_0848"></script>
+  <script src="js/app.js?v=20261018_0020"></script>
+  <script src="js/criteria_dropdown.js?v=20261017_2055"></script>
+</body>
+
+</html>
