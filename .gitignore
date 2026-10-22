@@ -1,0 +1,14 @@
+# Excel lock & temp files
+~$*
+*.tmp
+*.temp
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary debug artifacts
+scratch/*.png
+scratch/*.html
+scratch/*.txt
