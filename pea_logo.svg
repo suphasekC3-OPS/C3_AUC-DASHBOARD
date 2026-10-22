@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Purple Gradient -->
+    <linearGradient id="peaPurpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7B2D9F"/>
+      <stop offset="50%" stop-color="#682C91"/>
+      <stop offset="100%" stop-color="#4A156B"/>
+    </linearGradient>
+
+    <!-- Gold Gradient -->
+    <linearGradient id="peaGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE885"/>
+      <stop offset="40%" stop-color="#FFB81C"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+
+    <!-- Inner Glow & Shadows -->
+    <filter id="peaGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#FFB81C" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Circle with Gold Border -->
+  <circle cx="250" cy="250" r="236" fill="url(#peaPurpleGrad)" stroke="url(#peaGoldGrad)" stroke-width="12" filter="url(#peaGlow)"/>
+  
+  <!-- Inner Decorative Ring -->
+  <circle cx="250" cy="250" r="218" fill="none" stroke="#FFB81C" stroke-width="2.5" stroke-dasharray="8 6" opacity="0.85"/>
+  <circle cx="250" cy="250" r="210" fill="none" stroke="url(#peaGoldGrad)" stroke-width="3"/>
+
+  <!-- Center Shield Base -->
+  <circle cx="250" cy="250" r="195" fill="#521B75" opacity="0.6"/>
+
+  <!-- Top Crown / Royal Crest Ornament -->
+  <g id="peaCrown" transform="translate(250, 115) scale(0.95)" filter="url(#goldGlow)">
+    <!-- Central Spire / Unalom -->
+    <path d="M0 -55 L8 -30 L18 -15 L8 -5 L0 25 L-8 -5 L-18 -15 L-8 -30 Z" fill="url(#peaGoldGrad)"/>
+    <circle cx="0" cy="-60" r="6" fill="#FFFBEB"/>
+    <!-- Crown Left Wing -->
+    <path d="M-8 -5 C-35 -25 -55 -10 -45 15 C-40 25 -25 25 -5 22 Z" fill="url(#peaGoldGrad)"/>
+    <!-- Crown Right Wing -->
+    <path d="M8 -5 C35 -25 55 -10 45 15 C40 25 25 25 5 22 Z" fill="url(#peaGoldGrad)"/>
+    <!-- Base Ribbon of Crown -->
+    <path d="M-42 22 Q0 30 42 22 L38 32 Q0 40 -38 32 Z" fill="url(#peaGoldGrad)" stroke="#B45309" stroke-width="1"/>
+  </g>
+
+  <!-- Lightning Bolt & Electric Transmission Waves (Official PEA Identity) -->
+  <g id="peaLightning" filter="url(#goldGlow)">
+    <!-- Lightning Flash Core -->
+    <polygon points="268,145 205,245 248,245 220,345 305,230 258,230" fill="url(#peaGoldGrad)" stroke="#FFFFFF" stroke-width="2.5" stroke-linejoin="round"/>
+    
+    <!-- Electric Circuit Waves (Left & Right) -->
+    <!-- Left Radiating Energy Arcs -->
+    <path d="M 170 210 Q 140 245 170 280" fill="none" stroke="url(#peaGoldGrad)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 140 190 Q 100 245 140 300" fill="none" stroke="url(#peaGoldGrad)" stroke-width="4.5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 115 175 Q 65 245 115 315" fill="none" stroke="url(#peaGoldGrad)" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Right Radiating Energy Arcs -->
+    <path d="M 330 210 Q 360 245 330 280" fill="none" stroke="url(#peaGoldGrad)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 360 190 Q 400 245 360 300" fill="none" stroke="url(#peaGoldGrad)" stroke-width="4.5" stroke-linecap="round" opacity="0.85"/>
+    <path d="M 385 175 Q 435 245 385 315" fill="none" stroke="url(#peaGoldGrad)" stroke-width="3" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <!-- Circular Arch Text: การไฟฟ้าส่วนภูมิภาค -->
+  <!-- Arc path for Thai Text -->
+  <path id="textArcTop" d="M 75 250 A 175 175 0 0 1 425 250" fill="none"/>
+  <path id="textArcBottom" d="M 420 250 A 170 170 0 0 1 80 250" fill="none"/>
+
+  <!-- Bold Typography: PEA (Center Lower) -->
+  <g transform="translate(250, 395)" filter="url(#goldGlow)">
+    <rect x="-85" y="-32" width="170" height="42" rx="10" fill="#3D0F62" stroke="url(#peaGoldGrad)" stroke-width="2.5"/>
+    <text x="0" y="-3" font-family="'Prompt', 'Arial Black', sans-serif" font-size="34" font-weight="900" fill="url(#peaGoldGrad)" text-anchor="middle" letter-spacing="4">PEA</text>
+  </g>
+
+  <!-- Bottom Arch Thai Text: การไฟฟ้าส่วนภูมิภาค -->
+  <text font-family="'Prompt', 'Sarabun', sans-serif" font-size="20" font-weight="700" fill="#FFFFFF" letter-spacing="2">
+    <textPath href="#textArcBottom" startOffset="50%" text-anchor="middle">
+      การไฟฟ้าส่วนภูมิภาค • กฟภ.
+    </textPath>
+  </text>
+
+  <!-- Top Arch English Subtitle: PROVINCIAL ELECTRICITY AUTHORITY -->
+  <text font-family="'Prompt', sans-serif" font-size="12.5" font-weight="600" fill="#FFD25A" letter-spacing="2.5" opacity="0.95">
+    <textPath href="#textArcTop" startOffset="50%" text-anchor="middle">
+      PROVINCIAL ELECTRICITY AUTHORITY
+    </textPath>
+  </text>
+</svg>
