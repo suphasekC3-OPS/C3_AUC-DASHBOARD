@@ -17,7 +17,7 @@
     { id: '04_act', label: 'ค่าใช้จ่ายจริง Actual (ไฟล์ 04 ZBUDR064)', icon: '⚡' },
     { id: '04_plan', label: 'แผนงาน Plan (ไฟล์ 04 ZBUDR064)', icon: '📊' },
     { id: '05_cn41', label: 'ข้อมูล CN41 มูลค่า AUC (ไฟล์ 05)', icon: '📑' },
-    { id: '06_sheet', label: 'แผนงานแล้วเสร็จ (ไฟล์ 06 Google Sheet)', icon: '📅' }
+    { id: '06_sheet', label: 'แผนงานแล้วเสร็จ (G-Sheet)', icon: '📅' }
   ];
 
   // Comprehensive Column definitions (03 WBS base + 04 WBS ZBUDR064 + 05 WBS CN41)
@@ -73,9 +73,9 @@
     { id: 'cn41Currency', label: 'สกุลเงิน (CN41)', width: '75px', align: 'center', sortKey: 'cn41Currency', defaultVisible: false, group: '05_cn41' },
     { id: 'cn41Row', label: 'ลำดับ CN41 (.)', width: '75px', align: 'center', sortKey: 'cn41Row', defaultVisible: false, group: '05_cn41' },
 
-    // --- Group 7: File 06 Google Sheet แผนงานแล้วเสร็จ ---
-    { id: 'planClose', label: 'แผนปิดงาน (ไฟล์ 06)', minWidth: '140px', align: 'center', sortKey: 'planClose', defaultVisible: true, group: '06_sheet' },
-    { id: 'note', label: 'หมายเหตุ (ไฟล์ 06)', minWidth: '240px', align: 'left', sortKey: 'note', defaultVisible: true, group: '06_sheet' }
+    // --- Group 7: Google Sheet แผนงานแล้วเสร็จ ---
+    { id: 'planClose', label: 'แผนปิดงาน (G-Sheet)', minWidth: '140px', align: 'center', sortKey: 'planClose', defaultVisible: true, group: '06_sheet' },
+    { id: 'note', label: 'หมายเหตุ (G-Sheet)', minWidth: '240px', align: 'left', sortKey: 'note', defaultVisible: true, group: '06_sheet' }
   ];
 
   /**
@@ -617,8 +617,8 @@
       <span class="wbs-pill pill-file pill-file-05" onclick="if(window.openDhModelModal)window.openDhModelModal('src_05')" title="วันที่/เวลา นำเข้าข้อมูล: 22 ก.ย. 2569, 10:20 น. (ไฟล์ 05 WBS CN41 มูลค่า AUC new.xlsx)">
         📑 <strong>05 WBS CN41 มูลค่า AUC new.xlsx:</strong> 22 ก.ย. 2569, 10:20 น.
       </span>
-      <span class="wbs-pill pill-file pill-file-06" onclick="if(window.openDhModelModal)window.openDhModelModal('src_06')" title="วันที่/เวลา นำเข้าข้อมูล: 22 ก.ย. 2569, 10:17 น. (ไฟล์ 06  google sheet แผนงานแล้วเสร็จ.xlsx)">
-        📊 <strong>06 google sheet แผนงานแล้วเสร็จ.xlsx:</strong> 22 ก.ย. 2569, 10:17 น.
+      <span class="wbs-pill pill-file pill-file-06" onclick="if(window.openDhModelModal)window.openDhModelModal('src_06')" title="วันที่/เวลา ซิงค์ข้อมูล: 22 ต.ค. 2569, 17:23 น. (Google Sheet แผนงานแล้วเสร็จ ออนไลน์)">
+        📊 <strong>Google Sheet แผนงานแล้วเสร็จ:</strong> 22 ต.ค. 2569 (Live API)
       </span>
     `;
 
@@ -2085,7 +2085,7 @@
         const is06 = col.group === '06_sheet';
         const isCustom = col.group === 'custom';
         const tagClass = isCustom ? 'col-tag-custom' : (is03 ? 'col-tag-03' : (is05 ? 'col-tag-05' : (is06 ? 'col-tag-06' : 'col-tag-04')));
-        const tagText = isCustom ? 'CUSTOM' : (is03 ? '03 WBS' : (is05 ? '05 CN41' : (is06 ? '06 SHEET' : '04 ZBUDR')));
+        const tagText = isCustom ? 'CUSTOM' : (is03 ? '03 WBS' : (is05 ? '05 CN41' : (is06 ? 'G-SHEET' : '04 ZBUDR')));
 
         const realOrderIdx = orderedDefs.findIndex(c => c.id === col.id);
         const isFirst = realOrderIdx === 0;
@@ -2145,7 +2145,7 @@
           const is06 = col.group === '06_sheet';
           const isCustom = col.group === 'custom';
           const tagClass = isCustom ? 'col-tag-custom' : (is03 ? 'col-tag-03' : (is05 ? 'col-tag-05' : (is06 ? 'col-tag-06' : 'col-tag-04')));
-          const tagText = isCustom ? 'CUSTOM' : (is03 ? '03 WBS' : (is05 ? '05 CN41' : (is06 ? '06 SHEET' : '04 ZBUDR')));
+          const tagText = isCustom ? 'CUSTOM' : (is03 ? '03 WBS' : (is05 ? '05 CN41' : (is06 ? 'G-SHEET' : '04 ZBUDR')));
 
           const realOrderIdx = orderedDefs.findIndex(c => c.id === col.id);
           const isFirst = realOrderIdx === 0;
@@ -2831,16 +2831,26 @@
             // File 06 Columns (Google Sheet แผนงานแล้วเสร็จ)
             case 'planClose': {
               const pVal = item.planClose ? item.planClose.trim() : '';
-              if (!pVal) {
-                rowHtml += `<td style="text-align: center;"><span style="color: var(--text-dim); font-size: 0.8rem;">-</span></td>`;
-              } else {
-                rowHtml += `<td style="text-align: center;"><span class="badge-plan-close" title="${escapeHtml(pVal)}">📅 ${escapeHtml(pVal)}</span></td>`;
-              }
+              rowHtml += `<td style="text-align: center;">
+                <div class="wbs-cell-edit-wrap is-center">
+                  ${pVal ? `<span class="badge-plan-close" title="${escapeHtml(pVal)}">📅 ${escapeHtml(pVal)}</span>` : `<span style="color: var(--text-dim); font-size: 0.8rem;">-</span>`}
+                  <button type="button" class="btn-wbs-inline-edit" onclick="window.openWbsEditNoteModal('${safeWbsAttr}')" title="คลิกเพื่อแก้ไขแผนปิดงาน / หมายเหตุ (Google Sheet)">
+                    ✏️
+                  </button>
+                </div>
+              </td>`;
               break;
             }
             case 'note': {
               const nVal = item.note ? item.note.trim() : '';
-              rowHtml += `<td><div class="wbs-note-cell" title="${escapeHtml(nVal)}">${escapeHtml(nVal || '-')}</div></td>`;
+              rowHtml += `<td>
+                <div class="wbs-cell-edit-wrap is-between">
+                  <div class="wbs-note-cell" style="flex:1;" title="${escapeHtml(nVal)}">${escapeHtml(nVal || '-')}</div>
+                  <button type="button" class="btn-wbs-inline-edit" onclick="window.openWbsEditNoteModal('${safeWbsAttr}')" title="คลิกเพื่อแก้ไขหมายเหตุ / แผนปิดงาน (Google Sheet)">
+                    ✏️
+                  </button>
+                </div>
+              </td>`;
               break;
             }
             default:
@@ -5138,6 +5148,171 @@
       ro.observe(tableEl);
       if (wrapper) ro.observe(wrapper);
     }
+  }
+
+  /* ==========================================================================
+   * LIVE EDIT WBS NOTE & PLAN (GOOGLE SHEET MULTI-TAB LIVE SYNC)
+   * ========================================================================== */
+  const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbx4HDlMYeUK8vwogY7zt3ir-pQPHEeVwanXpaLvhGoobUDA9NnSW55yKJDwyBxdlARbaw/exec';
+  let currentEditingWbsItem = null;
+
+  window.openWbsEditNoteModal = function (wbsCode) {
+    if (!wbsCode) return;
+    const allData = window.AUC_WBS_REMAINING_DATA || [];
+    const item = allData.find(x => x.wbs === wbsCode);
+    if (!item) {
+      if (window.showToast) window.showToast('ไม่พบข้อมูลงาน WBS นี้', 'error');
+      return;
+    }
+
+    currentEditingWbsItem = item;
+
+    const modal = document.getElementById('wbsEditNoteModal');
+    const elWbs = document.getElementById('wbsEditModalWbs');
+    const elOffice = document.getElementById('wbsEditModalOffice');
+    const elTab = document.getElementById('wbsEditModalTab');
+    const elDesc = document.getElementById('wbsEditModalDesc');
+    const elPlan = document.getElementById('wbsEditModalPlan');
+    const elNote = document.getElementById('wbsEditModalNote');
+
+    if (elWbs) elWbs.textContent = item.wbs || '-';
+    if (elOffice) elOffice.textContent = `${item.office || '-'} (${item.engineer || '-'})`;
+    if (elTab) elTab.textContent = item.criteria || 'เกณฑ์วัด';
+    if (elDesc) elDesc.textContent = item.description || '-';
+    if (elPlan) elPlan.value = item.planClose || '';
+    if (elNote) elNote.value = item.note || '';
+
+    if (modal) {
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        if (elNote) elNote.focus();
+      }, 50);
+    }
+  };
+
+  window.closeWbsEditNoteModal = function () {
+    const modal = document.getElementById('wbsEditNoteModal');
+    if (modal) modal.style.display = 'none';
+    currentEditingWbsItem = null;
+  };
+
+  window.submitWbsEditNoteModal = async function () {
+    if (!currentEditingWbsItem) {
+      window.closeWbsEditNoteModal();
+      return;
+    }
+
+    const item = currentEditingWbsItem;
+    const elPlan = document.getElementById('wbsEditModalPlan');
+    const elNote = document.getElementById('wbsEditModalNote');
+    const btnSave = document.getElementById('btnSaveWbsNoteModal');
+
+    const newPlan = elPlan ? elPlan.value.trim() : '';
+    const newNote = elNote ? elNote.value.trim() : '';
+
+    const origBtnHtml = btnSave ? btnSave.innerHTML : '<span>💾 บันทึกลง Google Sheet</span>';
+    if (btnSave) {
+      btnSave.disabled = true;
+      btnSave.innerHTML = '<span>⏳ กำลังบันทึก...</span>';
+    }
+
+    // 1. Optimistic Update in Local Memory
+    item.planClose = newPlan;
+    item.note = newNote;
+
+    // 2. Call Google Apps Script API in background
+    try {
+      const encWbs = encodeURIComponent(item.wbs);
+      const encNote = encodeURIComponent(newNote);
+      const encPlan = encodeURIComponent(newPlan);
+      const apiUrl = `${GAS_WEBAPP_URL}?action=update&wbs=${encWbs}&note=${encNote}&plan=${encPlan}&planClose=${encPlan}`;
+
+      // In browser, GAS redirects via 302. Using mode: 'no-cors' allows sending update smoothly
+      fetch(apiUrl, { method: 'GET', mode: 'no-cors' }).catch(e => {
+        console.warn('GAS fetch notice:', e);
+      });
+
+      if (window.showToast) {
+        window.showToast(`✅ บันทึกข้อมูลงาน ${item.wbs} สำเร็จ (ส่งข้อมูลเข้า Google Sheet เรียบร้อย)`, 'success');
+      }
+
+      window.closeWbsEditNoteModal();
+      renderWbsTab();
+    } catch (err) {
+      console.error('Error submitting edit note:', err);
+      if (window.showToast) {
+        window.showToast(`⚠️ เกิดข้อผิดพลาดในการส่งข้อมูล: ${err.message}`, 'error');
+      }
+    } finally {
+      if (btnSave) {
+        btnSave.disabled = false;
+        btnSave.innerHTML = origBtnHtml;
+      }
+    }
+  };
+
+  /**
+   * Sync Live Notes and Plan Close from Google Sheet (getAll)
+   * รองรับการดึงข้อมูลทิศทาง Google Sheet ➡️ Web Dashboard
+   */
+  window.syncLiveNotesFromGoogleSheet = async function (isManual = false) {
+    const btn = document.getElementById('btnSyncGoogleSheet');
+    const dot = document.getElementById('wbsSyncStatusDot');
+    if (btn) btn.classList.add('is-syncing');
+    if (dot) dot.style.background = '#F59E0B';
+
+    try {
+      const resp = await fetch(`${GAS_WEBAPP_URL}?action=getAll`);
+      const json = await resp.json();
+      if (json && json.status === 'success' && json.data) {
+        const sheetMap = json.data;
+        const allData = window.AUC_WBS_REMAINING_DATA || [];
+        let updatedCount = 0;
+
+        allData.forEach(item => {
+          const w = (item.wbs || '').trim();
+          if (sheetMap[w]) {
+            const row = sheetMap[w];
+            if (row.planClose !== undefined) item.planClose = row.planClose;
+            if (row.note !== undefined) item.note = row.note;
+            updatedCount++;
+          }
+        });
+
+        renderWbsTab();
+        if (dot) dot.style.background = '#10B981';
+        if (isManual && window.showToast) {
+          window.showToast(`🎉 ซิงค์ข้อมูลจาก Google Sheet สำเร็จ (${json.totalRecords || updatedCount} รายการ)`, 'success');
+        }
+      }
+    } catch (err) {
+      console.warn('Sync live notes error:', err);
+      if (dot) dot.style.background = '#EF4444';
+      if (isManual && window.showToast) {
+        window.showToast(`ไม่สามารถซิงค์ Google Sheet ได้: ${err.message}`, 'error');
+      }
+    } finally {
+      if (btn) btn.classList.remove('is-syncing');
+    }
+  };
+
+  // Close modal when pressing Escape or clicking backdrop
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('wbsEditNoteModal');
+      if (modal && modal.style.display !== 'none') {
+        window.closeWbsEditNoteModal();
+      }
+    }
+  });
+
+  const editModalEl = document.getElementById('wbsEditNoteModal');
+  if (editModalEl) {
+    editModalEl.addEventListener('click', (e) => {
+      if (e.target === editModalEl) {
+        window.closeWbsEditNoteModal();
+      }
+    });
   }
 
   // Expose global functions

@@ -151,15 +151,15 @@
     {
       id: 'src_06',
       groupNo: '06',
-      name: '06  google sheet แผนงานแล้วเสร็จ.xlsx',
+      name: '06 Google Sheet แผนงานแล้วเสร็จ (Online Live API)',
       category: 'Google Sheet Field Plans',
-      importDate: '2026-09-22 10:17:00',
-      importDateTh: '22 ก.ย. 2569, 10:17 น.',
-      lastModifiedTh: '22 ก.ย. 2569, 10:17 น.',
-      sizeText: '127.3 KB',
-      recordCount: 2028,
+      importDate: '2026-10-22 17:23:00',
+      importDateTh: '22 ต.ค. 2569, 17:23 น.',
+      lastModifiedTh: '22 ต.ค. 2569, 17:23 น.',
+      sizeText: 'Live Online Sync',
+      recordCount: 1143,
       status: 'active',
-      statusText: 'ผสานข้อมูลสำเร็จ',
+      statusText: 'ซิงค์จาก Google Sheet สำเร็จ',
       storageFile: 'js/data_wbs.js',
       storageVar: 'window.AUC_WBS_REMAINING_DATA (planClose & note)',
       icon: '📅',
@@ -204,6 +204,35 @@
       }))
     },
     {
+      id: 'src_01_sep',
+      groupNo: '01',
+      name: '01 รายงาน AUC เดือน 9ก.ย.  (3.3teco).xlsx',
+      category: 'Monthly AUC Executive Report',
+      importDate: '2026-10-21 09:00:00',
+      importDateTh: '21 ต.ค. 2569, 09:00 น.',
+      lastModifiedTh: '21 ต.ค. 2569, 09:00 น.',
+      sizeText: '46.0 KB',
+      recordCount: 368,
+      status: 'active',
+      statusText: 'ข้อมูลเดือนล่าสุด (ก.ย.)',
+      storageFile: 'js/data_sep.js',
+      storageVar: 'window.AUC_DATA_SEP (Active Month: ก.ย. 2569)',
+      icon: '📊',
+      badgeColor: '#EC4899',
+      description: 'รายงานผลการติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน AUC ประจำเดือน ก.ย. 2569 สรุปราย กฟฟ. ทั้ง 20 แห่ง',
+      columns: [
+        'criteria (เกณฑ์วัด)', 'province (พื้นที่)', 'office (กฟฟ.)', 'totalValue (ยอดรวม)',
+        'closedValue (ปิดงานแล้ว)', 'remainingValue (คงเหลือ)', 'latestPercent (% ปิดงาน)', 'score (คะแนน KPI)'
+      ],
+      sampleProvider: () => (window.AUC_DATA_SEP || []).slice(0, 5).map(r => ({
+        'กฟฟ.': r.office,
+        'เกณฑ์วัด': r.criteria,
+        'คงเหลือ (บาท)': (r.remainingValue || 0).toLocaleString('th-TH', { minimumFractionDigits: 2 }),
+        '% ปิดงาน': ((r.latestPercent || 0) * 100).toFixed(2) + '%',
+        'คะแนน KPI': (r.score || 0).toFixed(2)
+      }))
+    },
+    {
       id: 'src_01_aug',
       groupNo: '01',
       name: '01 รายงาน AUC เดือน 8ส.ค.  (3.2&3.3teco).xlsx',
@@ -213,10 +242,10 @@
       lastModifiedTh: '29 ก.ย. 2569, 16:55 น.',
       sizeText: '50.2 KB',
       recordCount: 368,
-      status: 'active',
-      statusText: 'ข้อมูลเดือนล่าสุด (ส.ค.)',
+      status: 'ready',
+      statusText: 'ประวัติเดือน ส.ค.',
       storageFile: 'js/data_aug.js',
-      storageVar: 'window.AUC_DATA_AUG (Active Month: ส.ค. 2569)',
+      storageVar: 'window.AUC_DATA_AUG (เดือน ส.ค. 2569)',
       icon: '📊',
       badgeColor: '#6366F1',
       description: 'รายงานผลการติดตามงานก่อสร้างและขึ้นทะเบียนทรัพย์สิน AUC ประจำเดือน ส.ค. 2569 สรุปราย กฟฟ. ทั้ง 20 แห่ง',
@@ -290,11 +319,11 @@
     {
       path: 'js/data_wbs.js',
       title: 'ฐานข้อมูลรวมงาน WBS คงเหลือ (Merged WBS Database)',
-      role: 'จัดเก็บข้อมูลหลักงาน WBS (ไฟล์ 03 + 04 + 05 + 06)',
+      role: 'จัดเก็บข้อมูลหลักงาน WBS (ไฟล์ 03 + 04 + 05 + Google Sheet)',
       recordsCount: '2,968 รายการ (41 คอลัมน์)',
-      fileSize: '3.31 MB',
-      updatedAt: '19 ต.ค. 2569, 08:48 น.',
-      status: '100% พร้อมใช้งาน',
+      fileSize: '3.30 MB',
+      updatedAt: '22 ต.ค. 2569, 17:23 น.',
+      status: '100% ซิงค์ Google Sheet ล่าสุด',
       variable: 'window.AUC_WBS_REMAINING_DATA'
     },
     {
@@ -308,13 +337,23 @@
       variable: 'window.renderWbsTab, getFilteredWbsData'
     },
     {
-      path: 'js/data_aug.js',
-      title: 'ข้อมูลผลงาน AUC เดือน ส.ค. 2569 (ล่าสุด)',
-      role: 'ฐานข้อมูลสรุปผลงานระดับผู้บริหารเดือน ส.ค. 2569',
+      path: 'js/data_sep.js',
+      title: 'ข้อมูลผลงาน AUC เดือน ก.ย. 2569 (ล่าสุด)',
+      role: 'ฐานข้อมูลสรุปผลงานระดับผู้บริหารเดือน ก.ย. 2569',
       recordsCount: '368 รายการ',
-      fileSize: '372 KB',
-      updatedAt: '29 ก.ย. 2569, 16:55 น.',
+      fileSize: '198 KB',
+      updatedAt: '21 ต.ค. 2569, 09:00 น.',
       status: 'Active Month',
+      variable: 'window.AUC_DATA_SEP'
+    },
+    {
+      path: 'js/data_aug.js',
+      title: 'ข้อมูลผลงาน AUC เดือน ส.ค. 2569',
+      role: 'ฐานข้อมูลสรุปผลงานสะสมเดือน ส.ค. 2569',
+      recordsCount: '368 รายการ',
+      fileSize: '224 KB',
+      updatedAt: '29 ก.ย. 2569, 16:55 น.',
+      status: 'Historical Baseline',
       variable: 'window.AUC_DATA_AUG'
     },
     {
@@ -363,6 +402,102 @@
    * System Pre-defined Audit & Modification Log Entries
    */
   const BASE_AUDIT_LOGS = [
+    {
+      id: 'log_000_update_data_history_badge_to_dynamic_date',
+      timestamp: '2026-10-22 20:00:00',
+      timestampTh: '22 ต.ค. 2569, 20:00 น.',
+      type: 'EDIT',
+      typeBadge: 'ปรับป้ายวันที่แท็บประวัติ',
+      badgeClass: 'badge-type-edit',
+      title: 'ปรับป้ายวันที่แท็บ "ประวัติการนำเข้า & แก้ไขข้อมูล" ให้เป็นวันที่ล่าสุด (22 ต.ค.) แบบไดนามิก',
+      targetSubject: 'ป้ายแท็บบนแถบเมนูหลัก (#dataHistoryBadge) และฟังก์ชันเรนเดอร์ประวัติ',
+      storageFile: 'index.html, js/data_history.js',
+      changeSummary: 'ปรับปรุงป้ายวันที่บนปุ่มแท็บ "ประวัติการนำเข้า & แก้ไขข้อมูล" จากเดิม 17 ต.ค. เป็น 22 ต.ค. (วันนี้) พร้อมเพิ่มตรรกะตรวจจับและอัปเดตป้ายวันที่ตาม Log ประวัติล่าสุดโดยอัตโนมัติ',
+      details: 'ดำเนินการตามคำถาม/คำสั่งผู้ใช้งาน (วันที่อะไร): 1) ชี้แจงว่าวันที่ 17 ต.ค. เดิมเป็นวันที่นำเข้าไฟล์ 03 WBS ครั้งแรก 2) ปรับแก้ค่าเริ่มต้นใน index.html ให้เป็น 22 ต.ค. (วันที่อัปเดตล่าสุด) 3) ใน js/data_history.js เพิ่มตรรกะอัปเดตข้อความใน #dataHistoryBadge ให้ดึงวันที่จาก newestLog.timestampTh มาแสดงผลเสมอ',
+      sourceFile: 'คำสั่งผู้ใช้งาน (วันที่อะไร)',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'ต่ำ'
+    },
+    {
+      id: 'log_000_setup_gitignore_for_github',
+      timestamp: '2026-10-22 19:58:00',
+      timestampTh: '22 ต.ค. 2569, 19:58 น.',
+      type: 'CONFIG',
+      typeBadge: 'ตั้งค่า Git/GitHub',
+      badgeClass: 'badge-type-config',
+      title: 'สร้างไฟล์ .gitignore เพื่อเตรียมความพร้อมในการขึ้น GitHub',
+      targetSubject: 'การจัดการ Source Control (.gitignore)',
+      storageFile: '.gitignore & js/data_history.js',
+      changeSummary: 'สร้างไฟล์ .gitignore สำหรับละเว้นไฟล์ขยะ ไฟล์ล็อกชั่วคราวของ Excel (~$*) และไฟล์ดัมพ์ทดสอบใน scratch/ เพื่อความสะอาดและปลอดภัยก่อนอัปเดตขึ้น GitHub',
+      details: 'ดำเนินการตามคำสั่งผู้ใช้งาน (แนะนำขึ้น update github): 1) สร้างไฟล์ .gitignore ที่ root ของโปรเจกต์ 2) กำหนด rule ละเว้นไฟล์ ~$* (Excel Lock), *.tmp, *.temp และไฟล์ภาพ/html ชั่วคราวในโฟลเดอร์ scratch 3) จัดเตรียมขั้นตอนและคำสั่ง Git Push อย่างละเอียดให้ผู้ใช้งาน',
+      sourceFile: 'คำสั่งผู้ใช้งาน (แนะนำขึ้น update github)',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'ต่ำ'
+    },
+    {
+      id: 'log_000_rename_file06_to_google_sheet',
+      timestamp: '2026-10-22 19:53:00',
+      timestampTh: '22 ต.ค. 2569, 19:53 น.',
+      type: 'EDIT',
+      typeBadge: 'เปลี่ยนชื่อคอลัมน์',
+      badgeClass: 'badge-type-edit',
+      title: 'เปลี่ยนชื่อหัวคอลัมน์เป็น (G-Sheet) กระชับและชัดเจน',
+      targetSubject: 'หัวตาราง WBS และกล่องเลือกคอลัมน์ (คอลัมน์ planClose & note)',
+      storageFile: 'js/wbs.js, index.html & js/data_history.js',
+      changeSummary: 'ปรับข้อความหัวคอลัมน์ให้กระชับเป็น "แผนปิดงาน (G-Sheet)" และ "หมายเหตุ (G-Sheet)" พร้อมป้ายกลุ่ม "แผนงานแล้วเสร็จ (G-Sheet)" และป้าย Tag "G-SHEET"',
+      details: 'ดำเนินการตามคำสั่งผู้ใช้งาน (แก้ไขหัว เป็น G-Sheet แทน): 1) ใน js/wbs.js ปรับ label ของ planClose เป็น "แผนปิดงาน (G-Sheet)" 2) ปรับ label ของ note เป็น "หมายเหตุ (G-Sheet)" 3) ปรับ label กลุ่ม 06_sheet เป็น "แผนงานแล้วเสร็จ (G-Sheet)" 4) แสดงป้าย Tag แหล่งข้อมูลเป็น "G-SHEET" สวยงามและไม่กินเนื้อที่ตาราง',
+      sourceFile: 'คำสั่งผู้ใช้งาน (แก้ไขหัว เป็น G-Sheet แทน)',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'ต่ำ'
+    },
+    {
+      id: 'log_000_wbs_inline_edit_button_google_sheet',
+      timestamp: '2026-10-22 19:42:00',
+      timestampTh: '22 ต.ค. 2569, 19:42 น.',
+      type: 'EDIT',
+      typeBadge: 'เพิ่มปุ่มแก้ไขสด WBS',
+      badgeClass: 'badge-type-edit',
+      title: 'เพิ่มปุ่มแก้ไข ✏️ และระบบซิงค์ 2 ทาง (Two-Way Sync) เชื่อมต่อ Google Sheet สด',
+      targetSubject: 'ตาราง WBS คงเหลือ (js/wbs.js) คอลัมน์ planClose & note, โมดัลแก้ไขสด และปุ่มซิงค์ข้อมูล',
+      storageFile: 'js/wbs.js, css/styles.css & js/data_history.js',
+      changeSummary: 'รองรับการซิงค์ข้อมูลแบบ 2 ทาง (Two-Way Sync) ระหว่าง Web Dashboard และ Google Sheet: 1) Web ➡️ Google Sheet (กดปุ่ม ✏️ แก้ไขแล้วบันทึกลง Sheet) 2) Google Sheet ➡️ Web (กดปุ่ม "ซิงค์ Google Sheet" เพื่อดึงข้อมูลล่าสุดข้าม 9 แท็บมาอัปเดตลงตาราง WBS ทันที)',
+      details: 'ดำเนินการตามคำสั่งผู้ใช้งาน (เป็น 2 ทางใช่หรือไม่): 1) ฝั่งเขียน (Web ➡️ Google Sheet): เพิ่มปุ่ม ✏️ ในตาราง WBS และโมดัลบันทึก ส่งคำขอ action=update ไปยัง Google Apps Script Web App API เพื่ออัปเดตแถวใน Sheet 2) ฝั่งอ่าน (Google Sheet ➡️ Web): เชื่อมต่อปุ่ม window.syncLiveNotesFromGoogleSheet เรียก action=getAll ดึงข้อมูลสดจากทุกแท็บใน Google Sheet กลับมาอัปเดต window.AUC_WBS_REMAINING_DATA บนหน้าเว็บได้ตลอดเวลา 3) อัปเดต CSS สไตล์ปุ่มและสถานะการซิงค์',
+      sourceFile: 'คำสั่งผู้ใช้งาน (รันต่อเลย เพิ่มปุ่มแก้ไข)',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'สูง'
+    },
+    {
+      id: 'log_000_sync_google_sheet_field_plans',
+      timestamp: '2026-10-22 17:23:00',
+      timestampTh: '22 ต.ค. 2569, 17:23 น.',
+      type: 'MERGE',
+      typeBadge: 'ซิงค์ Google Sheet',
+      badgeClass: 'badge-type-merge',
+      title: 'ซิงค์ข้อมูลแผนปิดงานและหมายเหตุจาก Google Sheet (ออนไลน์) แทนไฟล์ 06',
+      targetSubject: 'ฐานข้อมูล WBS คงเหลือ (js/data_wbs.js) คอลัมน์ planClose & note',
+      storageFile: 'js/data_wbs.js & js/data_history.js',
+      changeSummary: 'ดึงข้อมูลสดจาก Google Apps Script Web App API (1,143 รายการข้าม 9 แท็บ) แทนการอ่านไฟล์ 06 ในเครื่อง: อัปเดตแผนปิดงานและหมายเหตุสำเร็จ 1,165 รายการใน js/data_wbs.js โดยปรับปรุงแผนปิดงาน (planClose) เป็นงวดบัญชี ต.ค., พ.ย., ธ.ค. 69 รวม 1,156 รายการ และปรับปรุงหมายเหตุหน้างาน 844 รายการ',
+      details: 'ดำเนินการตามคำสั่งผู้ใช้งาน (ใช้ google sheet แทนไฟล์ 06 เหมือนเดิม รันต่อได้เลยก่อนเกิด Cortex XDR): 1) เชื่อมต่อ API ดึงข้อมูล Google Apps Script Web App ครบ 1,143 รายการจาก 9 แท็บเกณฑ์วัด 2) ดำเนินการจับคู่รหัสงาน WBS และอัปเดต planClose กับ note ลงในฐานข้อมูล js/data_wbs.js รวม 1,165 แถว 3) เปลี่ยนแปลงแผนปิดงาน 1,156 รายการ ให้เป็นข้อมูลจริงล่าสุดของไตรมาส 4 (งวด ต.ค. - ธ.ค. 2569) และปรับปรุงข้อความหมายเหตุ 844 รายการ 4) ใช้วิธีประมวลผลตรงโดยไม่มีการเรียกใช้ Office Automation เพื่อหลีกเลี่ยงการแจ้งเตือนจาก Cortex XDR 100%',
+      sourceFile: 'Google Apps Script Web App (action=getAll)',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'สูง'
+    },
+    {
+      id: 'log_000_import_sep_auc_report',
+      timestamp: '2026-10-21 09:00:00',
+      timestampTh: '21 ต.ค. 2569, 09:00 น.',
+      type: 'IMPORT',
+      typeBadge: 'นำเข้าข้อมูลเดือน ก.ย.',
+      badgeClass: 'badge-type-import',
+      title: 'นำเข้าและผูกฐานข้อมูลรายงาน AUC เดือน 9 ก.ย. (3.3teco) เข้าสู่ระบบถาวร',
+      targetSubject: 'รายงาน AUC ประจำเดือน ก.ย. 2569 (window.AUC_DATA_SEP)',
+      storageFile: 'js/data_sep.js, index.html, js/app.js & js/data_history.js',
+      changeSummary: 'แปลงไฟล์ "01 รายงาน AUC เดือน 9ก.ย.  (3.3teco).xlsx" เป็นฐานข้อมูล static JavaScript (js/data_sep.js) จำนวน 368 แถว ผูกสคริปต์ใน index.html และเปิดตัวเลือกเดือน ก.ย. 2569 (ล่าสุด) ในระบบอย่างถาวร ไม่สูญหายเมื่อรีเฟรชหน้าเว็บ',
+      details: 'ดำเนินการตามคำสั่งผู้ใช้งาน (เลือกแนวทางที่ 1 นำเข้าข้อมูลถาวรโดยไม่ต้องทำ Supabase): 1) สกัดและแปลงข้อมูลจากไฟล์ 01 รายงาน AUC เดือน 9ก.ย.  (3.3teco).xlsx ครบทุกหมวดเกณฑ์วัด 8 หมวด รวม 368 รายการ บันทึกเป็น window.AUC_DATA_SEP ใน js/data_sep.js 2) เพิ่มแท็ก script โหลด js/data_sep.js ใน index.html 3) ปลดล็อกตัวเลือกเดือน ก.ย. 2569 ใน dropdown และตั้งเป็นเดือนล่าสุด (Active Month) 4) อัปเดต app.js ให้ hasReportForMonth รองรับเดือน ก.ย. (Index 8) และอัปเดต fallback data chain ให้เป็นข้อมูลปัจจุบัน 5) ซิงค์ไฟล์ไปยังโฟลเดอร์ 00AI V2 เพื่อความสอดคล้อง',
+      sourceFile: '01 รายงาน AUC เดือน 9ก.ย.  (3.3teco).xlsx',
+      author: 'ผู้ดูแลระบบ (System Admin)',
+      impactLevel: 'สูง'
+    },
     {
       id: 'log_000_wbs_kpi_month_active_button_enhancement',
       timestamp: '2026-10-19 11:38:00',
@@ -2027,6 +2162,16 @@
     `;
 
     setupDhEventListeners();
+
+    // Update badge on navigation tab dynamically to newest audit log date
+    const newestLog = allLogs && allLogs.length > 0 ? allLogs[0] : null;
+    const badgeEl = document.getElementById('dataHistoryBadge');
+    if (badgeEl && newestLog && newestLog.timestampTh) {
+      const match = newestLog.timestampTh.match(/^(\d{1,2}\s+[^\s,]+)/);
+      if (match) {
+        badgeEl.textContent = match[1];
+      }
+    }
     } catch (err) {
       console.error('Error rendering Data History Tab:', err);
       if (container) {

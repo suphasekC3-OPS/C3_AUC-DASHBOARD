@@ -15979,5 +15979,85 @@ body.has-fullscreen-table {
   color: #64748B;
 }
 
+/* Live Google Sheet Multi-Tab Sync & Edit Note UI */
+.btn-wbs-sync-sheet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-wbs-sync-sheet:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10B981;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.btn-wbs-sync-sheet.is-syncing {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.btn-wbs-sync-sheet.is-syncing svg {
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
 
+/* WBS Inline Edit Button (✏️) in Plan Close & Note Cells */
+.btn-wbs-inline-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: var(--pea-gold-400, #FBBF24);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  line-height: 1.2;
+  transition: all 0.15s ease-in-out;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+.btn-wbs-inline-edit:hover {
+  opacity: 1;
+  background: rgba(251, 191, 36, 0.2);
+  border-color: rgba(251, 191, 36, 0.5);
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+}
 
+.wbs-cell-edit-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+}
+
+.wbs-cell-edit-wrap.is-center {
+  justify-content: center;
+}
+
+.wbs-cell-edit-wrap.is-between {
+  justify-content: space-between;
+}
+
+[data-theme="light"] .btn-wbs-inline-edit {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #B45309;
+}
+
+[data-theme="light"] .btn-wbs-inline-edit:hover {
+  background: rgba(234, 179, 8, 0.2);
+  border-color: #F59E0B;
+}

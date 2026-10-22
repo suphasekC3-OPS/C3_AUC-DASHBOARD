@@ -36,7 +36,7 @@
       kpiGrade: 'ALL',
       search: '',
       unit: 'ALL',
-      month: 7 // เริ่มต้นที่ ส.ค. (ไฟล์รายงาน 01 ส.ค.2569)
+      month: 8 // เริ่มต้นที่ ก.ย. (ไฟล์รายงาน 01 ก.ย.2569 ล่าสุด)
     },
     table: {
       page: 1,
@@ -115,7 +115,7 @@
     { monthIndex: 5, shortMonth: 'มิ.ย.', monthName: 'มิถุนายน', filename: '01 รายงาน AUC เดือน 6มิ.ย. (3.2teco).xlsx', targetVar: 'AUC_DATA_JUN', pattern: /6มิ\.ย\.|เดือน\s*6\b/i },
     { monthIndex: 6, shortMonth: 'ก.ค.', monthName: 'กรกฎาคม', filename: '01 รายงาน AUC เดือน 7ก.ค.  (3.2teco).xlsx', targetVar: 'AUC_DATA_JUL', pattern: /7ก\.ค\.|เดือน\s*7\b/i },
     { monthIndex: 7, shortMonth: 'ส.ค.', monthName: 'สิงหาคม', filename: '01 รายงาน AUC เดือน 8ส.ค.  (3.2&3.3teco).xlsx', targetVar: 'AUC_DATA_AUG', pattern: /8ส\.ค\.|เดือน\s*8\b/i },
-    { monthIndex: 8, shortMonth: 'ก.ย.', monthName: 'กันยายน', filename: '01 รายงาน AUC เดือน 9ก.ย. ยังไม่มี (3.3teco).xlsx', targetVar: 'AUC_DATA_SEP', pattern: /9ก\.ย\.|เดือน\s*9\b/i },
+    { monthIndex: 8, shortMonth: 'ก.ย.', monthName: 'กันยายน', filename: '01 รายงาน AUC เดือน 9ก.ย.  (3.3teco).xlsx', targetVar: 'AUC_DATA_SEP', pattern: /9ก\.ย\.|เดือน\s*9\b/i },
     { monthIndex: 9, shortMonth: 'ต.ค.', monthName: 'ตุลาคม', filename: '01 รายงาน AUC เดือน 10ต.ค. ยังไม่มี (3.3teco).xlsx', targetVar: 'AUC_DATA_OCT', pattern: /10ต\.ค\.|เดือน\s*10\b/i },
     { monthIndex: 10, shortMonth: 'พ.ย.', monthName: 'พฤศจิกายน', filename: '01 รายงาน AUC เดือน 11พ.ย. ยังไม่มี (3.3teco).xlsx', targetVar: 'AUC_DATA_NOV', pattern: /11พ\.ย\.|เดือน\s*11\b/i },
     { monthIndex: 11, shortMonth: 'ธ.ค.', monthName: 'ธันวาคม', filename: '01 รายงาน AUC เดือน 12ธ.ค. ยังไม่มี (3.3teco).xlsx', targetVar: 'AUC_DATA_DEC', pattern: /12ธ\.ค\.|เดือน\s*12\b/i }
@@ -532,7 +532,7 @@
       const hasClosed = raw.some(d => (Number(d.closedJobs) > 0 || Number(d.closedValue) > 0));
       if (hasClosed) return true;
     }
-    return m >= 0 && m <= 7;
+    return m >= 0 && m <= 8;
   }
 
   function getRawDataForMonth(mIdx) {
@@ -556,7 +556,7 @@
     const m = Number(mIdx);
     let rawList = getRawDataForMonth(m);
     if (!rawList.length) {
-      rawList = (window.AUC_DATA_AUG || window.AUC_DATA_JUL || window.AUC_INITIAL_DATA || window.AUC_DATA_JUN || window.AUC_DATA_MAY || window.AUC_DATA_APR || window.AUC_DATA_MAR || window.AUC_DATA_FEB || window.AUC_DATA_JAN || []);
+      rawList = (window.AUC_DATA_SEP || window.AUC_DATA_AUG || window.AUC_DATA_JUL || window.AUC_INITIAL_DATA || window.AUC_DATA_JUN || window.AUC_DATA_MAY || window.AUC_DATA_APR || window.AUC_DATA_MAR || window.AUC_DATA_FEB || window.AUC_DATA_JAN || []);
     }
 
     state.allData = rawList.map(item => {
@@ -854,13 +854,13 @@
       let mHtml = '';
       for (let m = 0; m < 12; m++) {
         const hasData = hasReportForMonth(m);
-        const isLatest = m === 7;
+        const isLatest = m === 8;
         const label = isLatest ? `เดือน ${MONTHS_TH[m]} (ล่าสุด)` : `เดือน ${MONTHS_TH[m]}`;
         const suffix = hasData ? '' : ' (ยังไม่มีข้อมูล)';
         const disabledAttr = hasData ? '' : ' disabled';
         mHtml += `<option value="${m}"${disabledAttr}>${label}${suffix}</option>`;
       }
-      const currentM = (typeof state.filters.month === 'number') ? state.filters.month : 7;
+      const currentM = (typeof state.filters.month === 'number') ? state.filters.month : 8;
       document.querySelectorAll('.select-chart-month').forEach(sel => {
         sel.innerHTML = mHtml;
         sel.value = currentM;
